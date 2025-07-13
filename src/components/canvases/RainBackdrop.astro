@@ -1,0 +1,202 @@
+
+
+<canvas id="garden-canvas" class="w-full h-full "/>
+<script type="module">
+  const canvas = document.getElementById("garden-canvas")
+
+  const ctx = canvas.getContext('2d');
+
+  if (!ctx) {
+    console.log("no context")
+  }
+
+    const numberOfDrops = 50;
+    const targetFPS = 60;
+
+
+
+  let splashes = [];
+  const drops = [];
+  const buttonPositions = [];
+
+function updateButtonPositions() {
+  buttonPositions.length = 0;
+  const canvasRect = canvas.getBoundingClientRect();
+
+  document.querySelectorAll('.surface').forEach(button => {
+    const rect = button.getBoundingClientRect();
+    buttonPositions.push({
+      top: rect.top - canvasRect.top,
+      left: rect.left - canvasRect.left,
+      right: rect.right - canvasRect.left,
+      bottom: rect.bottom - canvasRect.top,
+      width: rect.width,
+      height: rect.height,
+    });
+  });
+}
+
+  function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  updateButtonPositions();
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+window.addEventListener('scroll', updateButtonPositions);
+
+updateButtonPositions(); // initial call
+
+function nodeCollideWithElement (x, y) {
+  let collides = false;
+
+  return buttonPositions.some(pos => {
+    return x < pos.right && x > pos.left && y < pos.bottom && y > pos.top
+  })
+}
+
+  class RainDrop {
+    x = 0;
+    y = 0;
+    angle = Math.PI / 2 + Math.PI / 12
+    velocity = 8;
+    radius = 1;
+    trail = [];
+    prevX = 0;
+    prevY = 0;
+    hit = false;
+
+    constructor(x, y, angle = Math.PI / 2 + Math.PI / 12) {
+      this.x = x;
+      this.y = y;
+      this.angle = angle;
+    }
+
+    update() {
+
+      this.trail.push({x: this.x, y: this.y})
+      if (this.trail.length > 1) {
+        this.trail.shift()
+      }
+
+      this.prevX = this.x;
+      this.prevY = this.y;
+
+      this.y += Math.sin(this.angle) * this.velocity;
+      this.x += Math.cos(this.angle) * this.velocity;
+
+      if (nodeCollideWithElement(this.x, this.y)) {
+        const {x, y} = this;
+        splashes.push(new SplashDrop(x, y, Math.PI/3))
+        splashes.push(new SplashDrop(x, y, Math.PI/2))
+        splashes.push(new SplashDrop(x, y, Math.PI/1.25))
+        this.y = -10;
+        this.x = Math.random() * canvas.width;
+        this.trail = [];
+        this.hit = true;
+        
+      } else if (this.y > canvas.height){
+        this.y = -10;
+        this.x = Math.random() * canvas.width;
+        this.trail = [];
+        this.hit = true;
+      }else {
+        this.hit = false;
+      }
+    }
+    
+
+    /**
+     * 
+     * @param ctx CanvasRendering2dContext
+     */
+    draw(ctx) {
+      ctx.fillStyle = "white";
+      ctx.shadowColor = "rgba(255, 255, 255, 0.9)";
+      ctx.shadowBlur = 10
+
+      
+      if (this.trail.length > 0) {
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(this.trail[0]?.x, this.trail[0]?.y);
+        ctx.lineTo(this.x, this.y);
+        ctx.stroke();
+      }
+
+      ctx.beginPath();
+      ctx.fillStyle = "white"
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  class SplashDrop {
+  x = 0;
+  y = 0;
+  vx = 0; // horizontal velocity
+  vy = 0; // vertical velocity
+  gravity = 0.4; // gravity acceleration
+  radius = 0.5;
+  canRemove = false;
+
+  constructor(x, y, angle = Math.PI / 4, speed = 10) {
+    this.x = x;
+    this.y = y;
+    // Initial velocity: up and to the right
+    this.vx = Math.cos(angle) * speed;
+    this.vy = Math.sin(angle) * -speed; // negative for upward
+  }
+
+  update() {
+    this.vy += this.gravity; // gravity pulls down
+    this.x += this.vx;
+    this.y += this.vy;
+
+    if (this.y > canvas.height) {
+      this.canRemove = true;
+    }
+  }
+
+  draw(ctx) {
+    ctx.beginPath();
+    ctx.fillStyle = "white";
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+  for (let i = 0; i < numberOfDrops; i++) {
+    const randomXPlacement = Math.random() * canvas.width * 1.5;
+    const randomYPlacement = Math.random() * -screen.height + -5;
+    drops.push(new RainDrop(randomXPlacement, randomYPlacement, Math.PI / 2 + Math.PI / 12))
+  }
+
+  let lastFrameTime = 0;
+  const frameDelay = 1000 / targetFPS;
+
+  function animate(time = 0) {
+    const delta = time - lastFrameTime;
+
+    if (delta >= frameDelay) {
+      lastFrameTime = time;
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      drops.forEach(drop => {
+        drop.update();
+        drop.draw(ctx);
+      })
+
+      splashes.forEach(splash => {
+        splash.update();
+        splash.draw(ctx);
+      })
+      splashes = splashes.filter(splash => !splash.canRemove)
+    }
+
+    requestAnimationFrame(animate)
+  }
+
+  animate();
+
+</script>

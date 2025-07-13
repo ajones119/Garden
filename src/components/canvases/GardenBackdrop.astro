@@ -1,0 +1,97 @@
+
+---
+    
+---
+<canvas id="garden-canvas" class="w-full h-full "/>
+<script>
+    import Plant from "../canvases/classes/Plant.ts"
+
+    
+    const canvas = document.getElementById("garden-canvas") as HTMLCanvasElement
+    if (canvas) {
+
+        const ctx = canvas?.getContext('2d') as CanvasRenderingContext2D;
+        const debug = false;
+        const targetFPS = 10;
+        const sideLength = 5;
+        let height = 0;
+        let width = 0
+        const block = [
+            [0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+        ]
+
+        
+
+        if (!ctx) {
+            console.log("no context")
+        }
+
+        const plant = new Plant()
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            width = Math.ceil(canvas.width / sideLength)
+            height = Math.ceil(canvas.height / sideLength)
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        let lastFrameTime = 0;
+        const frameDelay = 1000 / targetFPS;
+
+        let fps = 0;
+        let framesThisSecond = 0;
+        let lastFpsUpdate = 0;
+
+        let currentHeight = 0;
+        function animate(time = 0) {
+
+            const delta = time - lastFrameTime;
+
+            if (!lastFpsUpdate) lastFpsUpdate = time;
+            const elapsed = time - lastFpsUpdate;
+
+            framesThisSecond++;
+            if (elapsed >= 1000) {
+                fps = framesThisSecond;
+                framesThisSecond = 0;
+                lastFpsUpdate = time;
+            }
+
+            if (delta >= frameDelay && currentHeight < block.length - 1) {
+                lastFrameTime = time;
+
+                //ctx.clearRect(0, 0, canvas.width, canvas.height)
+                const row = block[block.length - 1 - currentHeight];
+                ctx.fillStyle = "green"
+                row.forEach((cell, index) => {
+                    if (cell) {
+                        ctx.fillRect(
+                            index * sideLength,
+                            canvas.height - (currentHeight + 1) * sideLength,
+                            sideLength,
+                            sideLength
+                        )
+                    }
+                })
+
+                currentHeight ++;
+            }
+
+
+            requestAnimationFrame(animate)
+        }
+
+        animate();
+    }
+
+</script>
+

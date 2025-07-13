@@ -1,0 +1,9 @@
+---
+import "../styles/global.css";
+
+const {id} = Astro.props;
+---
+
+<section id={id} class="h-dvh w-full relative">
+    <slot />
+</section>

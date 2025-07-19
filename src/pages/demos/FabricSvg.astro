@@ -1,0 +1,193 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Denim from "../../assets/demoImages/svgFabric/fabric1.jpg";
+import Satin from "../../assets/demoImages/svgFabric/fabric2.avif";
+import Cloth from "../../assets/demoImages/svgFabric/fabric3.jpg";
+import Slider from "../../components/Inputs/Slider.astro"
+
+import { Image } from 'astro:assets'
+import BaseDemoLayout from "../../layouts/BaseDemoLayout.astro";
+
+---
+<Layout hasNavbar>
+  <BaseDemoLayout title="Content on Fabric" dateAdded="07/2025" topics={["svg", "feDisplacementMap"]}>
+    <div class="w-10/12 md:8/12 mx-auto my-5">
+      <p>
+        Here we'll break down the steps to applying a fabric texture to Text, images, and div elements! This svg filter combination utilizes 
+        <code>feImage</code>, <code>feColorMatrix</code>, <code>feGaussianBlur</code>, <code>feDisplacementMap</code>, and <code>feBlend</code>. We'll 
+        then finally use <code>feMerge</code> to combine the background and foreground elements.
+      </p>
+
+      <!-- Step-by-step explanation -->
+      <div class="mt-8 space-y-4 text-sm text-gray-300 leading-6">
+        <h2 class="text-lg font-bold text-white">🧵 Step-by-Step Filter Construction</h2>
+        <ol class="list-decimal list-inside space-y-2">
+          <li><strong>feImage (BG & Original):</strong> We load the fabric image twice. One will be the background (BG), and the other will be manipulated for displacement.</li>
+          <li><strong>feColorMatrix (Saturate):</strong> Desaturates the image so we only use luminance to drive distortion.</li>
+          <li><strong>feGaussianBlur:</strong> Blurs the desaturated image to soften the distortion pattern.</li>
+          <li><strong>feDisplacementMap:</strong> Applies the blur as a displacement map to warp the input (like text).</li>
+          <li><strong>feColorMatrix (Opacity):</strong> Reduces the alpha of the displaced result to blend it more gently.</li>
+          <li><strong>feBlend:</strong> Multiplies the displaced image over the original texture.</li>
+          <li><strong>feMerge:</strong> Combines the blurred background and final textured text into one final image.</li>
+        </ol>
+      </div>
+
+      <!-- Filtered SVG Display -->
+      <div class="mx-auto mt-6 lg:w-8/12">
+        <svg
+          width="100%"
+          viewBox="0 0 800 600"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="xMidYMid slice"
+        >
+          <defs>
+            <filter id="displacement-filter-satin" filterUnits="userSpaceOnUse">
+              <!-- STEP 1: Load fabric image -->
+              <feImage href={Satin.src} result="BG" />
+              <feImage href={Satin.src} result="original" />
+
+              <!-- STEP 2: Desaturate it -->
+              <feColorMatrix in="original" type="saturate" values="0" result="IMAGE" />
+
+              <!-- STEP 3: Blur the grayscale image -->
+              <feGaussianBlur in="IMAGE" stdDeviation="0.15" result="BLUR" />
+
+              <!-- STEP 4: Displace the source graphic -->
+              <feDisplacementMap
+                in="SourceGraphic"
+                in2="BLUR"
+                xChannelSelector="R"
+                yChannelSelector="B"
+                scale="20"
+                result="Textured_Text"
+				id="displacement-map"
+              />
+
+              <!-- STEP 5: Slightly fade the texture -->
+              <feColorMatrix
+                in="Textured_Text"
+                result="Textured_Text_2"
+                type="matrix"
+                values="1 0 0 0 0
+                        0 1 0 0 0
+                        0 0 1 0 0
+                        0 0 0 .8 0"
+              />
+
+              <!-- STEP 6: Multiply blend with original -->
+              <feBlend in="BG" in2="Textured_Text_2" mode="multiply" result="Final_Text" />
+
+              <!-- STEP 7: Merge background and final output -->
+              <feMerge>
+                <feMergeNode in="BG" />
+                <feMergeNode in="Final_Text" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          <text
+            id="imageText"
+            x="50%"
+            y="40%"
+            text-anchor="middle"
+            font-size="80"
+            font-weight="700"
+            font-family="Arial"
+            fill="green"
+            dy=".3em"
+            style="filter: url(#displacement-filter-satin);"
+          >
+            Satin
+          </text>
+        </svg>
+      </div>
+
+      <!-- Interactive Controls -->
+      <div id="controls" class="mx-auto mt-6 flex flex-col gap-2 items-center">
+		<h6 class="">Controls</h6>
+        <Slider label="x-position" id="x-position" unit="%" />
+        <Slider label="y-position" id="y-position" unit="%" />
+        <Slider value={20} min={0} max={100} label="displacement-scale" id="displacement-scale" />
+      </div>
+    </div>
+	<!-- Code Example Section -->
+<div class="w-10/12 md:w-8/12 mx-auto mt-12">
+  <h2 class="text-lg font-bold text-foreground mb-2">🧩 Full SVG Filter Code</h2>
+  <p class="text-sm text-foreground mb-4">Here's the complete SVG snippet we used to achieve the fabric-textured displacement effect:</p>
+
+  <pre class="bg-muted text-muted-foreground p-4 rounded-md overflow-x-auto text-sm leading-snug">
+<code>&lt;svg width="100%" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"&gt;
+  &lt;defs&gt;
+    &lt;filter id="displacement-filter-satin" filterUnits="userSpaceOnUse"&gt;
+      &lt;feImage href="fabric.jpg" result="BG" /&gt;
+      &lt;feImage href="fabric.jpg" result="original" /&gt;
+      &lt;feColorMatrix in="original" type="saturate" values="0" result="IMAGE" /&gt;
+      &lt;feGaussianBlur in="IMAGE" stdDeviation="0.15" result="BLUR" /&gt;
+      &lt;feDisplacementMap in="SourceGraphic" in2="BLUR"
+        xChannelSelector="R" yChannelSelector="B"
+        scale="20" result="Textured_Text" /&gt;
+      &lt;feColorMatrix in="Textured_Text" result="Textured_Text_2" type="matrix"
+        values="1 0 0 0 0
+                0 1 0 0 0
+                0 0 1 0 0
+                0 0 0 .8 0" /&gt;
+      &lt;feBlend in="BG" in2="Textured_Text_2" mode="multiply" result="Final_Text" /&gt;
+      &lt;feMerge&gt;
+        &lt;feMergeNode in="BG" /&gt;
+        &lt;feMergeNode in="Final_Text" /&gt;
+      &lt;/feMerge&gt;
+    &lt;/filter&gt;
+  &lt;/defs&gt;
+
+  &lt;text x="50%" y="40%" text-anchor="middle"
+    font-size="80" font-weight="700"
+    font-family="Arial" fill="green"
+    dy=".3em"
+    style="filter: url(#displacement-filter-satin);"&gt;
+    Satin
+  &lt;/text&gt;
+&lt;/svg&gt;
+</code>
+  </pre>
+</div>
+
+  </BaseDemoLayout>
+</Layout>
+
+<script>
+	//initialize gsap
+	import gsap from "gsap";
+
+	let slider = 0;
+	const xSlider = document.getElementById("x-position");
+	const ySlider = document.getElementById("y-position");
+	const displacementSlider = document.getElementById("displacement-scale");
+
+	const imageText = document.getElementById("imageText") as HTMLElement
+	const displacementMap = document.getElementById("displacement-map") as HTMLElement
+	console.log(imageText, displacementMap)
+	if (imageText && displacementMap) {
+		
+		xSlider?.addEventListener('input', (e) => {
+			
+			const target = e?.target as HTMLInputElement;
+			const value = target.value;
+			imageText.setAttribute('x', `${value}%`)
+		});
+
+		ySlider?.addEventListener('input', (e) => {
+			const target = e?.target as HTMLInputElement;
+			const value = target.value;
+			imageText.setAttribute('y', `${value}%`)
+		});
+
+		displacementSlider?.addEventListener('input', (e) => {
+			const target = e?.target as HTMLInputElement;
+			const value = target.value;
+			console.log("scale")
+			displacementMap.setAttribute('scale', `${value}`)
+		});
+	}
+	
+
+</script>

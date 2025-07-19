@@ -3,11 +3,15 @@ import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
 import PageSection from "../layouts/PageSection.astro"
 import RainBackdrop from "../components/canvases/RainBackdrop.astro"
-import GardenBackdrop from "../components/canvases/GardenBackdrop.astro"
+import Button from "../components/Buttons/BasicButton.astro"
 import MainBackdrop from "../components/MainBackdrop/index.astro"
+
+
+
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+
 ---
 
 <Layout>
@@ -17,6 +21,151 @@ import MainBackdrop from "../components/MainBackdrop/index.astro"
 		</div>
 		<div class="absolute w-full h-full flex items-center justify-evenly gap-4 z-10">
 			
+
+			<div id="crt" data-display="baseDisplay" class=" h-dvh relative rounded-lg border-accent border-1 border-solid max-w-10/12 min-w-10/12 p-6 lg:p-10 justify-between items-center gap-3 grid grid-cols-1 md:grid-cols-2">
+				<div id="leftGraphic" class="relative">
+					<div id="baseDisplay">
+					<pre  class="text-accent font-mono text-2xs leading-none scale-35 mx-auto origin-top-left md:origin-left md:scale-50 xl:scale-75 ">
+ _   _        _  _          _____  _                        _ 
+| | | |      | || |        |_   _|| |                      | |
+| |_| |  ___ | || |  ___     | |  | |__    ___  _ __   ___ | |
+|  _  | / _ \| || | / _ \    | |  | '_ \  / _ \| '__| / _ \| |
+| | | ||  __/| || || (_) |   | |  | | | ||  __/| |   |  __/|_|
+\_| |_/ \___||_||_| \___/    \_/  |_| |_| \___||_|    \___|(_)
+
+Welcome to the Arcane Terminal!
+					</pre>
+					</div>
+					<div id="demos-display" class="hidden">
+						<pre  class="text-accent font-mono leading-none">
+				___
+			  /     \
+			 /       \
+			/         \
+		    |  ᚠᚢᚦᚨᚱᚲ  |
+		    |  ᚷᚹᚺᚾᛁᛃ  |
+		    |  ᛇᛈᛉᛊᛋᛏ  |
+		    |          |
+		    |    ᚱᚾᛟ   |
+		    \         /
+			 \_______/
+
+Demos and small explorations into code concepts
+						</pre>
+					</div>
+					<div id="projects-display" class="hidden">
+						<pre class="text-accent font-mono leading-none hiden">
+	Constructs
+
+						</pre>
+					</div>
+					<div id="about-me-display" class="hidden">
+						<pre class="text-accent font-mono leading-none scale-35 md:scale-50 xl:scale-75 ">
+.....:+.........................................................
+....#+#%%#-.....................................................
+..-#*#%%**#*...................::------:........................
+.-###%%#*##****=::::::::..::..::::::::-:........................
+:###%%%#%#%++==++**+::::::::::::::::::--........................
+*%%@@%#%#%#****+++=+****=:.-::::::--::-:........................
+#%@@%%%#%%#%*+=**=++++++*##+-:::::-=:::-:..:::..................
+%%@%%%%%%%%%%%##*#*****+++++**#+---=:-:---::::..................
+=+*%#%#%%%%%%%%%%%%****##++*+++**###+---=-::::::--::............
+=+++***##*#%%%%%%%%%%##%+***#+***++++*##+--::.:::::::--:........
+--++++=+=++=++#%%%%%%%%%#+%#**+*****++=+***#*-::--=-::-.........
+--::-=+-==+=====++#%%%%%%%%%%%%*#+*#+**+++++***#+------.........
+------::::--==++++++**#%%%%%%%%%#*%%******++++++**#*+...........
+:::::::::::-::---=++***++**#%%%%%%%%%%%%*###++*++++***#%**+*+:..
+::::::::::--..--::-::=*++**++++#%%%%%%%%%%%%#+*+******+-*==#***:
+:::=:.:=-:.::..-:::-.:=::=+++*+++++#%%%%%%%%%%%#%#+=##**+**#%+#:
+::.::..:-..:-..:-.:::::::::::-++++*++*##%%@%%%%%%%%%%%###%##*=-.
+:-:.--:.::..-::-:...:-....:::::::-*********#%%%%%%%@%#%%%%%#*+:.
+:=:.--::::.........:-::::::....:::--=+++++*+**##%%@@%%#%%%#*#-..
+.:-..:-..-:......::-..:-:...:-.:::--:-:===+*+**+****#@#%%%%%#:..
+:.:=.:-......::.----::.....::::-.:-.:=:--:=*++++++==.=#%%%#*....
+						</pre>
+					</div>
+					<div id="widgets-display" class="hidden">
+						<pre class="text-accent font-mono leading-none ">
+	widgset
+						</pre>
+					</div>
+				</div>
+				<div class="flex flex-col gap-3 justify-start grow">
+					<p id="scramble1" class="text-foreground font-epic">Where would you like to go?</p>
+					<div class="flex flex-wrap gap-2 justify-between items-center">
+						<a name="demos" href="/demos"  class="font-epic min-w-5/12 w-5/12 text-foreground cursor-pointer border-b border-b-accent hover:border-b-foreground nav-button focus:animate-pulse hover:animate-pulse ">Runestone</a>
+						<button name="projects" class=" font-epic min-w-5/12 w-5/12 text-foreground cursor-pointer border-b border-b-accent hover:border-b-foreground nav-button focus:animate-pulse hover:animate-pulse">Constructs</button>
+						<button name="about-me" class=" font-epic min-w-5/12 w-5/12 text-foreground cursor-pointer border-b border-b-accent hover:border-b-foreground nav-button focus:animate-pulse hover:animate-pulse">The Scribe</button>
+						<button name="widgets" class="font-epic min-w-5/12 w-5/12 text-foreground cursor-pointer border-b border-b-accent hover:border-b-foreground nav-button focus:animate-pulse hover:animate-pulse">Relics</button>
+
+					</div>
+				</div>
+			</div>
 		</div>
 	</PageSection>
 </Layout>
+<script>
+	//initialize gsap
+	import gsap from "gsap";
+	import { ScrambleTextPlugin } from "gsap/all";
+	gsap.registerPlugin(ScrambleTextPlugin) 
+
+	//Screen Graphic Initialize
+	const graphicContainer = document.getElementById("crt")
+
+	if (graphicContainer) {
+	
+
+	
+
+	}
+
+	//Scramble Controls
+	const scrambleChars = "ᚡᚢᚣᚤᚥᚦᚧᚨᚩᚶᛃ	ᛄ";
+	const scramble1 = document.getElementById("scramble1");
+	if (scramble1) {
+		console.log("RAN")
+		gsap.to(scramble1, {
+			duration: 1.5,
+			scrambleText: {
+				text: "Where would you like to go?",
+				speed: 3,
+				chars: scrambleChars
+			}
+		})
+	}
+
+
+	//initialize button listeners
+	function setLeftDisplay(id = "baseDisplay"){
+		console.log('ran set', id)
+		const children = document.getElementById('leftGraphic')?.children || [];
+		console.log(children.length)
+		for(let i = 0; i < children.length; i++) {
+			const childId = children[i].getAttribute('id');
+			console.log(childId, id + -'-display')
+			if (childId === id + '-display') {
+				children[i].classList.remove("hidden")
+				
+				document.getElementById('crt')?.setAttribute('data-display', id)
+			} else if (!children[i].classList.contains("hidden")) {
+				children[i].classList.add("hidden")
+			}
+		}
+	}
+
+	const navButtons = document.getElementsByClassName("nav-button")
+	for (let i = 0; i < navButtons.length; i++) {
+		gsap.to(navButtons[i], {
+			backgroundColor: "grey",
+			duration: 0.2,
+			yoyo: true,
+			repeat: -1,
+		})
+		navButtons[i].addEventListener('mouseenter', () => {
+			const name = navButtons[i].getAttribute('name')
+			setLeftDisplay(name || undefined)		
+		})
+	}
+
+</script>

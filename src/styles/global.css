@@ -10,6 +10,12 @@
   --color-primary: #50c878; /* 💚 smaragdine = pop! */
   --color-accent: #50c878; /* same as primary for clarity */
   --color-accent-foreground: #022b1d; /* deep emerald-black contrast */
+
+  --font-antique: "Uncial Antiqua", sans-serif;
+  --font-epic: "Michroma", sans-serif;
+
+  --shadow-pixel: '0 0 0 4px red, 4px 4px 0 0 red';
+
 }
 
 /* Dark theme */
@@ -24,5 +30,8 @@
     --color-primary: #50c878; /* stays smaragdine */
     --color-accent: #50c878;
     --color-accent-foreground: #dbffe3; /* light mint highlight */
+
+      --font-antique: "Uncial Antiqua", sans-serif;
+  --font-epic: "Michroma", sans-serif;
   }
 }

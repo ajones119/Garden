@@ -2,9 +2,9 @@
 ---
     
 ---
-<canvas id="garden-canvas" class="w-full h-full "/>
+<canvas id="garden-canvas" class="w-dvw h-dvh "/>
 <script>
-    import Plant from "../canvases/classes/Plant.ts"
+import {Plant} from "../canvases/classes/Plant.ts"
 
     
     const canvas = document.getElementById("garden-canvas") as HTMLCanvasElement
@@ -12,37 +12,56 @@
 
         const ctx = canvas?.getContext('2d') as CanvasRenderingContext2D;
         const debug = false;
-        const targetFPS = 10;
-        const sideLength = 5;
+        const targetFPS = 60;
+        let sideLength = 4;
         let height = 0;
         let width = 0
-        const block = [
-            [0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0],
-            [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-        ]
+        let mouseEntered = true;
+        let mousePosition = {xPos: 0, yPos: 0}
 
+        let foregroundPlants: Plant[] = [];
+        let midgroundPlants: Plant[] = [];
         
 
         if (!ctx) {
             console.log("no context")
         }
 
-        const plant = new Plant()
-
+        
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             width = Math.ceil(canvas.width / sideLength)
             height = Math.ceil(canvas.height / sideLength)
+
+            midgroundPlants = [
+
+                new Plant({sideLength, x: 0 - (8 * sideLength), y: canvas.height, delay: 400, opacity: 0.3, parallaxStrength: 0.015}),
+                new Plant({sideLength, x: 0 - (8 * sideLength), y: canvas.height - sideLength * 98, delay: 400, opacity: 0.3, parallaxStrength: 0.015}),
+                new Plant({sideLength, x: 0 - (8 * sideLength), y: canvas.height - sideLength * 98 * 2, delay: 400, opacity: 0.3, parallaxStrength: 0.015}),
+
+                new Plant({sideLength, x: canvas.width - (35 * sideLength), y: canvas.height, delay: 400, opacity: 0.3, parallaxStrength: 0.015}),
+                new Plant({sideLength, x: canvas.width - (35 * sideLength), y: canvas.height - sideLength * 98, delay: 400, opacity: 0.3, parallaxStrength: 0.015}),
+                new Plant({sideLength, x: canvas.width - (35 * sideLength), y: canvas.height - sideLength * 98 * 2, delay: 400, opacity: 0.3, parallaxStrength: 0.015}),
+            ]
+            foregroundPlants = [
+                new Plant({sideLength, x: - (16 * sideLength), y: canvas.height, parallaxStrength: 0.01}),
+                new Plant({sideLength, x: 0 - (16 * sideLength), y: canvas.height - sideLength * 98, delay: 0, parallaxStrength: 0.01}),
+                new Plant({sideLength, x: 0 - (16 * sideLength), y: canvas.height - sideLength * 98 * 2, delay: 0, parallaxStrength: 0.01}),
+
+                
+
+                new Plant({sideLength, x: canvas.width - (27 * sideLength), y: canvas.height, parallaxStrength: 0.01}),
+                new Plant({sideLength, x: canvas.width - (27 * sideLength), y: canvas.height - sideLength * 98, parallaxStrength: 0.01}),
+                new Plant({sideLength, x: canvas.width - (27 * sideLength), y: canvas.height - sideLength * 98 * 2, parallaxStrength: 0.01}),
+            ]
         }
 
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('mousemove', (event) => {
+            mousePosition = {xPos: event.x, yPos: event.y}
+        })
 
         let lastFrameTime = 0;
         const frameDelay = 1000 / targetFPS;
@@ -51,7 +70,24 @@
         let framesThisSecond = 0;
         let lastFpsUpdate = 0;
 
-        let currentHeight = 0;
+        function drawCRTOverlay() {
+        // Scanlines
+            /*ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            for (let y = 0; y < canvas.height; y += 12) {
+                ctx.fillRect(0, y, canvas.width, 2);
+            }*/
+
+            // Vignette
+            const gradient = ctx.createRadialGradient(
+                canvas.width / 2, canvas.height / 2, canvas.width * 0.3,
+                canvas.width / 3, canvas.height / 2, canvas.width * 0.7
+            );
+            gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0.4)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
         function animate(time = 0) {
 
             const delta = time - lastFrameTime;
@@ -66,26 +102,14 @@
                 lastFpsUpdate = time;
             }
 
-            if (delta >= frameDelay && currentHeight < block.length - 1) {
-                lastFrameTime = time;
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            
+            midgroundPlants.forEach(plant =>plant.update(time, mousePosition));
+            midgroundPlants.forEach(plant => plant.draw(ctx, canvas));
+            foregroundPlants.forEach(plant =>plant.update(time, mousePosition));
+            foregroundPlants.forEach(plant => plant.draw(ctx, canvas));
 
-                //ctx.clearRect(0, 0, canvas.width, canvas.height)
-                const row = block[block.length - 1 - currentHeight];
-                ctx.fillStyle = "green"
-                row.forEach((cell, index) => {
-                    if (cell) {
-                        ctx.fillRect(
-                            index * sideLength,
-                            canvas.height - (currentHeight + 1) * sideLength,
-                            sideLength,
-                            sideLength
-                        )
-                    }
-                })
-
-                currentHeight ++;
-            }
-
+            //drawCRTOverlay();
 
             requestAnimationFrame(animate)
         }

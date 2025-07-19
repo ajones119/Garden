@@ -1,0 +1,38 @@
+---
+
+const {dateAdded = "", title = "", topics = []} = Astro.props
+---
+
+<div class="flex flex-nowrap">
+    <section id="contentNav" class="bg-muted w-0 md:w-50 h-screen sticky overflow-y-auto shrink-0 top-0">
+        <ul class="p-2">
+            <li>some section 1</li>
+            <li>some section 2</li>
+        </ul>
+    </section>
+    <section id="mainContent">
+        
+        <section id="title">
+            <h1 class="text-2xl xl:text-4xl text-center mt-2 font-epic">{title}</h1>
+        </section>
+        <section class="text-sm mx-auto text-center" id="meta">
+            <p>Date Added - {dateAdded}</p>
+            <p>
+                <b>Tobpics</b> - 
+                {
+                    topics.join(', ')
+                }
+            </p>
+
+        </section>
+        <section id="content">
+            <slot />
+        </section>
+    </section>
+</div>
+<script>
+	//initialize gsap
+	import gsap from "gsap";
+	
+
+</script>

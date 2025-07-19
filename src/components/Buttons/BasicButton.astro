@@ -1,0 +1,14 @@
+---
+// Props
+const {
+    id
+} = Astro.props;
+
+---
+
+<button
+    class={`px-4 py-2 rounded-md font-bold text-white transition-colors bg-muted hover:bg-accent hover:cursor-pointer`}
+    id={id}
+>
+    <slot />
+</button>

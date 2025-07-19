@@ -1,0 +1,52 @@
+---
+const {
+    id = "slider",
+    label = "",
+    min = 0,
+    max = 100,
+    step = 1,
+    value = 50,
+    unit = "",
+    name,
+} = Astro.props;
+---
+
+<div class="flex flex-col gap-1 w-full max-w-sm text-[var(--color-foreground)] font-epic">
+    {label && <label for={id} class="text-sm mb-1 text-[var(--color-muted-foreground)]">{label}</label>}
+
+    <div data-type={"rangeInput"} data-unit={unit} class="flex items-center gap-3">
+        <input
+            type="range"
+            id={id}
+            name={name || id}
+            min={min}
+            max={max}
+            step={step}
+            value={value}
+            class="w-full h-2 bg-[var(--color-muted)] rounded-lg appearance-none cursor-pointer accent-[var(--color-primary)]"
+        />
+        <output for={id} id={`${id}-output`} class="text-xs w-10 text-left text-nowrap">
+            {value + " "}{unit}
+        </output>
+    </div>
+</div>
+<script>
+    const containers = document.querySelectorAll('[data-type="rangeInput"]');
+    containers.forEach((element) => {
+        const container = element as HTMLDivElement;
+        const unit = container.dataset.unit;
+        if (container) {
+            const slider = container.querySelector('input[type="range"]');
+            const output = container.querySelector('output');
+
+            if (slider && output) {
+            slider.addEventListener('input', (e) => {
+                const target = e.target as HTMLInputElement;
+                const val = target.value;
+                output.textContent = val + unit;
+            });
+            }
+        }
+    });
+    
+</script>

@@ -14,24 +14,22 @@
   --font-antique: "Uncial Antiqua", sans-serif;
   --font-epic: "Michroma", sans-serif;
 
-  --shadow-pixel: '0 0 0 4px red, 4px 4px 0 0 red';
-
+  --shadow-pixel: "0 0 0 4px red, 4px 4px 0 0 red";
+  --navbar-height: 3rem; /* consistent navbar height */
 }
 
 /* Dark theme */
 .dark {
-  @theme {
-    --color-background: #0f1115; /* deep neutral charcoal */
-    --color-foreground: #f1f5f9; /* light text */
-    --color-muted: #1c1e24; /* dark cards/sections */
-    --color-muted-foreground: #9ca3af; /* subtle text */
-    --color-border: #334155; /* low-contrast border */
+  --color-background: #0f1115; /* deep neutral charcoal */
+  --color-foreground: #f1f5f9; /* light text */
+  --color-muted: #1c1e24; /* dark cards/sections */
+  --color-muted-foreground: #9ca3af; /* subtle text */
+  --color-border: #334155; /* low-contrast border */
 
-    --color-primary: #50c878; /* stays smaragdine */
-    --color-accent: #50c878;
-    --color-accent-foreground: #dbffe3; /* light mint highlight */
+  --color-primary: #50c878; /* stays smaragdine */
+  --color-accent: #50c878;
+  --color-accent-foreground: #dbffe3; /* light mint highlight */
 
-      --font-antique: "Uncial Antiqua", sans-serif;
+  --font-antique: "Uncial Antiqua", sans-serif;
   --font-epic: "Michroma", sans-serif;
-  }
 }

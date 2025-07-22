@@ -6,7 +6,7 @@ const {hasNavbar} = Astro.props
 ---
 
 <!doctype html>
-<html lang="en" class="bg-background">
+<html lang="en" class=`bg-background scroll-smooth ${hasNavbar ? "[scroll-padding-top:56px]" : ""}`>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
@@ -16,22 +16,43 @@ const {hasNavbar} = Astro.props
 		<link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Iceberg&family=Michroma&family=Uncial+Antiqua&display=swap" rel="stylesheet">
 
 		<meta name="generator" content={Astro.generator} />
-		<title>Aramis' Garden</title>
+		<title>Garden</title>
 	</head>
 	<body class="text-foreground bg-background">
 		{hasNavbar && <NavBar />}
-		<div class={`${hasNavbar ? "mt-[48px]" : ""}`}><slot /></div>
+		<div id="pageContent" class={`${hasNavbar ? "mt-[48px]" : ""} transition-all duration-200`}><slot /></div>
 	</body>
 </html>
 
 <style>
 	html,
 	body {
-		margin: 0;
+		margin: 0 auto;
 		width: 100%;		
 	}
 </style>
 
 <script>
+    // color scheme
+    let colorScheme = localStorage.getItem("color-scheme") || "light";
+    console.log("Color scheme:", colorScheme);
+    document.documentElement.classList.add(colorScheme);
+
+
+	const navMenuButton = document.getElementById("menuToggle");
+	const mainContent = document.getElementById("pageContent");
+	let isNavMenuOpen = false;
+
+	if (navMenuButton && mainContent) {
+		navMenuButton?.addEventListener("click", () => {
+			if (isNavMenuOpen) {
+				mainContent.classList.remove("scale-99");
+			} else {
+				mainContent.classList.add("scale-99");
+			}
+
+			isNavMenuOpen = !isNavMenuOpen;
+		})
+	}
 
 </script>

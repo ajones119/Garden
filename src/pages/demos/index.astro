@@ -1,12 +1,33 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import FabricSvgImage from "../../assets/demoImages/svgFabric/sectionImage.png"
+import Image from "astro/components/Image.astro";
 
-
+const Pages: {href: string, title: string, description: string, imageUrl: ImageMetadata, createdAt: Date, updatedAt?: Date}[] = [
+	{ href: "/demos/FabricSvg", title: "Fabric SVG Filter Demo", description: "A demo of applying a fabric texture to SVG elements using filters.", imageUrl: FabricSvgImage, createdAt: new Date("07/15/2025") },
+	{ href: "/demos/RainfallCanvas", title: "RainfallCanvas", description: "Making Canvases for rainy days", imageUrl: FabricSvgImage, createdAt: new Date("07/15/2025") },
+	
+]
 ---
 
 <Layout hasNavbar>
 	Demos
-    <a href="/demos/FabricSvg">Fabric</a>
+    <div class="flex justify-center flex-wrap items-start gap-3 mx-auto">
+		{Pages.map(page => {
+			return (
+				<a href={page.href} class="shadow-sm hover:shadow-lg transition-all  bg-mute hover:border-accent rounded-lg border border-border border-solid w-12/12 sm:w-2/12 md:w-3/12 lg:w-2/12 sm:aspect-square duration-300 sm:min-w-80 max-w-9/12 sm:max-w-80">
+					<div class="flex flex-col h-full">
+						<Image loading="eager" src={page.imageUrl} alt={page.title} class="w-full h-3/4 object-cover rounded-t-lg mb-2" />
+						<div class="p-2">
+							<h3 class="text-lg font-semibold">{page.title}</h3>
+							<p class="text-sm text-muted-foreground">{page.description}</p>
+							<p class="text-sm text-muted-foreground"><b>Planted: </b>{page.createdAt.getMonth() + 1}/{page.createdAt.getDate()}/{page.createdAt.getFullYear()}</p>
+						</div>
+					</div>
+				</a>
+			)
+		})}
+	</div>
 </Layout>
 <script>
 	//initialize gsap

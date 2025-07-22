@@ -1,0 +1,15 @@
+---
+
+type SubsectionProps = {
+    id: string;
+    title: string;
+    addedClass?: string;
+}
+
+const {id, title, addedClass = ""} = Astro.props as SubsectionProps;
+---
+
+<section id={id} class=`my-4 px-2 mx-auto lg:w-10/12 ${addedClass}`>
+    <h1 class="text-xl font-bold text-foreground">{title}</h1>
+    <slot />
+</section>

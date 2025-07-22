@@ -1,0 +1,16 @@
+---
+// Props
+const {
+  addedClass = "",
+  
+} = Astro.props;
+---
+
+<div class={`relative w-full overflow-y-auto ${addedClass}`}>
+    <slot name="backdrop" />
+
+  <!-- Foreground scrollable content -->
+  <div class="relative z-10">
+    <slot />
+  </div>
+</div>

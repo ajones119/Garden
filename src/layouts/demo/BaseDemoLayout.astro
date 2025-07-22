@@ -1,0 +1,106 @@
+---
+import type { BaseDemoLayoutProps, Section } from "../../pages/demos/types";
+
+const {dateAdded = "", title = "", topics = [], sections = []} = Astro.props as BaseDemoLayoutProps;
+---
+
+<div class="flex flex-nowrap">
+    <nav id="contentNav" class="bg-muted w-0 md:w-50 h-[calc(100vh)] fixed overflow-y-auto shrink-0 top-10">
+        <ul class="p-2">
+            {sections && sections.map((section: Section) => (
+                <li class="text-sm my-1">
+                    <a href={`#${section.id}`} class="text-foreground hover:text-primary nav-link">{section.title}</a>
+                    {section.subsections && section.subsections.length > 0 && (
+                        <ul class="pl-4 mt-1">
+                            {section.subsections.map((sub: Section) => (
+                                <li class="text-xs my-1">
+                                    <a href={`#${sub.id}`} class="text-foreground hover:text-primary nav-link">{sub.title}</a>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </li>
+            ))}
+        </ul>
+    </nav>
+    <div id="mainContent" class="ml-0 md:ml-50 w-full md:w-[calc(100%-12rem)] mb-20">
+        <section id="intro">
+            <div id="title">
+                <h1 class="text-2xl xl:text-4xl text-center mt-2 font-epic">{title}</h1>
+            </div>
+            <div class="text-sm mx-auto text-center" id="meta">
+                <p>Date Added - {dateAdded}</p>
+                <p>
+                    <b>Tobpics</b> - 
+                    {
+                        topics.join(', ')
+                    }
+                </p>
+
+            </div>
+        </section>
+        <div id="content">
+            <slot />
+        </div>
+    </div>
+</div>
+<script>
+	//initialize gsap
+    import gsap from "gsap";
+	import scrambleTextBase from "../../constants/scramble-text-base";
+	import { ScrambleTextPlugin } from "gsap/all";
+	gsap.registerPlugin(ScrambleTextPlugin);
+
+    //scrambleTitles
+    const headers = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+    headers.forEach((header) => {
+        gsap.to(header, {
+            duration: Math.random() * 1 + 0.5,
+            scrambleText: {
+                text: header.textContent || "",
+                speed: 3,
+                chars: scrambleTextBase
+            }
+        })
+    })
+	
+    // setup for fill when section is on screen
+    const sections = document.querySelectorAll("section[id]") as NodeListOf<HTMLElement>;
+    const navLinks = document.querySelectorAll("#contentNav a") as NodeListOf<HTMLElement>;
+    const topNavBar = document.getElementById("navBar") as HTMLElement;
+
+    if (topNavBar) {
+        const offset = topNavBar.clientHeight;
+        console.log("offset", offset);
+
+        const onScroll = () => {
+            console.log("onscroll")
+            let currentSectionId = "";
+
+            sections.forEach((section) => {
+                const sectionTop = section.offsetTop - offset - 12;
+                if (window.scrollY >= sectionTop) {
+                    const sectionId = section.getAttribute("id");
+                    if (sectionId) {
+                        currentSectionId = sectionId;
+                    }
+                }
+            });
+            console.log("currentSectionId", currentSectionId);
+            navLinks.forEach((link) => {
+                const href = link.getAttribute("href");
+                link.classList.remove("font-bold", "text-smaragdine");
+                link.removeAttribute("aria-current");
+                if (href === `#${currentSectionId}`) {
+                    link.classList.add("font-bold", "text-accent")
+                    link.setAttribute("aria-current", "true");
+                }
+            })
+        }
+
+        window.addEventListener("scroll", onScroll);
+        window.addEventListener("resize", onScroll);
+        window.addEventListener("DOMContentLoaded", onScroll);
+    }
+</script>

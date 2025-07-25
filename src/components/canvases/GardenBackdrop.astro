@@ -40,7 +40,8 @@ import background from "../../assets/mainlayers/foregrounderase.png";
             width = Math.ceil(canvas.width / sideLength)
             height = Math.ceil(canvas.height / sideLength)
 
-            if (width < 650) {
+            if (window.innerWidth < 650) {
+                
                 midgroundPlants = []
                 foregroundPlants = []
                 targetFPS = 30;
@@ -152,6 +153,14 @@ import background from "../../assets/mainlayers/foregrounderase.png";
             foregroundPlants.forEach(plant =>plant.update(time, mousePosition));
             foregroundPlants.forEach(plant => plant.draw(ctx, canvas));
 
+            // Draw FPS debug at bottom right
+            ctx.save();
+            ctx.font = "20px monospace";
+            ctx.fillStyle = "#00FF00";
+            ctx.textAlign = "right";
+            ctx.textBaseline = "bottom";
+            ctx.fillText(`FPS: ${fps}`, canvas.width - 10, canvas.height - 10);
+            ctx.restore();
 
             requestAnimationFrame(animate)
         }

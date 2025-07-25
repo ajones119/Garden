@@ -44,8 +44,8 @@ export class ImageLayer {
             this.img.onload = () => {
             const {img, scale} = this;
                 const aspectRatio = img.width / img.height;
-                const maxWidth = (canvas.parentElement?.clientWidth || window.innerWidth) - 24;
-                const maxHeight = (canvas.parentElement?.clientHeight || window.innerHeight) - 24;
+                const maxWidth = (canvas.parentElement?.clientWidth || window.innerWidth);
+                const maxHeight = (canvas.parentElement?.clientHeight || window.innerHeight);
 
                 if (img.width > maxWidth || img.height > maxHeight) {
                     if (img.width > img.height) {

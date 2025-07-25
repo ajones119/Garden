@@ -16,20 +16,12 @@ import background from "../../assets/mainlayers/foregrounderase.png";
 
     const canvas = document.getElementById("garden-canvas") as HTMLCanvasElement
     if (canvas) {
-        const backgroundImage = new Image();
-        backgroundImage.src = MainBackgroundFull.src; // adjust path as needed
-
-        let imageLoaded = false;
-        backgroundImage.onload = () => {
-            imageLoaded = true;
-        };
+       
         const ctx = canvas?.getContext('2d') as CanvasRenderingContext2D;
-        const debug = false;
         const targetFPS = 60;
         let sideLength = 4;
         let height = 0;
         let width = 0
-        let mouseEntered = true;
         let mousePosition = {xPos: 0, yPos: 0}
 
         let foregroundPlants: Plant[] = [];
@@ -48,24 +40,30 @@ import background from "../../assets/mainlayers/foregrounderase.png";
             width = Math.ceil(canvas.width / sideLength)
             height = Math.ceil(canvas.height / sideLength)
 
-            midgroundPlants = [
-                new Plant({sideLength, x: 0 - (8 * sideLength), y: canvas.height, delay: 400, opacity: 0.3, parallaxStrength: 0}),
-                new Plant({sideLength, x: 0 - (8 * sideLength), y: canvas.height - sideLength * 98, delay: 400, opacity: 0.3, parallaxStrength: 0}),
-                new Plant({sideLength, x: 0 - (8 * sideLength), y: canvas.height - sideLength * 98 * 2, delay: 400, opacity: 0.3, parallaxStrength: 0}),
+            if (width < 650) {
+                midgroundPlants = []
+                foregroundPlants = []
+            } else {
 
-                new Plant({sideLength, x: canvas.width - (35 * sideLength), y: canvas.height, delay: 400, opacity: 0.3, parallaxStrength: 0}),
-                new Plant({sideLength, x: canvas.width - (35 * sideLength), y: canvas.height - sideLength * 98, delay: 400, opacity: 0.3, parallaxStrength: 0}),
-                new Plant({sideLength, x: canvas.width - (35 * sideLength), y: canvas.height - sideLength * 98 * 2, delay: 400, opacity: 0.3, parallaxStrength: 0}),
-            ]
-            foregroundPlants = [
-                new Plant({sideLength, x: - (16 * sideLength), y: canvas.height, parallaxStrength: 0}),
-                new Plant({sideLength, x: 0 - (16 * sideLength), y: canvas.height - sideLength * 98, delay: 0, parallaxStrength: 0}),
-                new Plant({sideLength, x: 0 - (16 * sideLength), y: canvas.height - sideLength * 98 * 2, delay: 0, parallaxStrength: 0}),
+                midgroundPlants = [
+                    new Plant({sideLength, x: 0 - (8 * sideLength), y: canvas.height, delay: 400, opacity: 0.3, parallaxStrength: 0}),
+                    new Plant({sideLength, x: 0 - (8 * sideLength), y: canvas.height - sideLength * 98, delay: 400, opacity: 0.3, parallaxStrength: 0}),
+                    new Plant({sideLength, x: 0 - (8 * sideLength), y: canvas.height - sideLength * 98 * 2, delay: 400, opacity: 0.3, parallaxStrength: 0}),
 
-                new Plant({sideLength, x: canvas.width - (27 * sideLength), y: canvas.height, parallaxStrength: 0}),
-                new Plant({sideLength, x: canvas.width - (27 * sideLength), y: canvas.height - sideLength * 98, parallaxStrength: 0}),
-                new Plant({sideLength, x: canvas.width - (27 * sideLength), y: canvas.height - sideLength * 98 * 2, parallaxStrength: 0}),
-            ]
+                    new Plant({sideLength, x: canvas.width - (35 * sideLength), y: canvas.height, delay: 400, opacity: 0.3, parallaxStrength: 0}),
+                    new Plant({sideLength, x: canvas.width - (35 * sideLength), y: canvas.height - sideLength * 98, delay: 400, opacity: 0.3, parallaxStrength: 0}),
+                    new Plant({sideLength, x: canvas.width - (35 * sideLength), y: canvas.height - sideLength * 98 * 2, delay: 400, opacity: 0.3, parallaxStrength: 0}),
+                ]
+                foregroundPlants = [
+                    new Plant({sideLength, x: - (16 * sideLength), y: canvas.height, parallaxStrength: 0}),
+                    new Plant({sideLength, x: 0 - (16 * sideLength), y: canvas.height - sideLength * 98, delay: 0, parallaxStrength: 0}),
+                    new Plant({sideLength, x: 0 - (16 * sideLength), y: canvas.height - sideLength * 98 * 2, delay: 0, parallaxStrength: 0}),
+
+                    new Plant({sideLength, x: canvas.width - (27 * sideLength), y: canvas.height, parallaxStrength: 0}),
+                    new Plant({sideLength, x: canvas.width - (27 * sideLength), y: canvas.height - sideLength * 98, parallaxStrength: 0}),
+                    new Plant({sideLength, x: canvas.width - (27 * sideLength), y: canvas.height - sideLength * 98 * 2, parallaxStrength: 0}),
+                ]
+            }
 
             imageLayers = [
                 new ImageLayer({

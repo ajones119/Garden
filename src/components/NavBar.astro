@@ -1,4 +1,6 @@
 ---
+import ThemeToggle from "./Inputs/ThemeToggle.astro";
+
 
 const {contentContainerId = ""} = Astro.props;
 ---
@@ -10,7 +12,7 @@ const {contentContainerId = ""} = Astro.props;
     <div class="mx-auto h-full flex items-center justify-between px-4">
         <a href="/" class="text-foreground font-bold text-lg">Aramis' Garden</a>
         <ul class="space-x-4 hidden md:flex">
-            <li><button id="themePicker">theme</button></li>
+            <li><ThemeToggle /></li>
             <li><a href="/demos" class="text-foreground hover:text-gray-300">Demos</a></li>
             <li><a href="/about" class="text-foreground hover:text-gray-300">About</a></li>
             <li><a href="/contact" class="text-foreground hover:text-gray-300">Contact</a></li>
@@ -47,25 +49,6 @@ const {contentContainerId = ""} = Astro.props;
 </nav>
 <script>
     import {gsap} from "gsap";
-
-    // color scheme
-    let colorScheme = localStorage.getItem("color-scheme") || "light";
-
-    const themePicker = document.getElementById("themePicker");
-    if (themePicker) {
-        themePicker.addEventListener("click", () => {
-            const currentScheme = colorScheme;
-
-            const newScheme = currentScheme === "light" ? "dark" : "light";
-            document.documentElement.classList.remove(currentScheme);
-            document.documentElement.classList.add(newScheme);
-            localStorage.setItem("color-scheme", newScheme)
-            colorScheme = newScheme;
-            console.log("Color scheme changed to:", newScheme);
-        })
-    }
-
-
     const navbarElement = document.getElementById("navBar");
     let isMobileMenuOpen = false;
     const menuToggle = document.getElementById("menuToggle");

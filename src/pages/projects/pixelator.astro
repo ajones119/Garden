@@ -1,0 +1,13 @@
+---
+
+import Layout from "../../layouts/Layout.astro";
+import { Pixelator as PixelatorComponent } from "../../projects/SolidJS/pixelator";
+---
+
+<Layout hasNavbar>
+    <div class="m-auto w-11/12 h-screen">
+        <PixelatorComponent
+            client:load
+        />
+    </div>
+</Layout>

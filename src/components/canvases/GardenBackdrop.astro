@@ -1,15 +1,28 @@
 
 ---
-    
+import MainBackgroundFull from "../../assets/mainBackgroundFull.jpeg";
 ---
 <canvas id="garden-canvas" class="w-dvw h-dvh "/>
 <script>
 import {Plant} from "../canvases/classes/Plant.ts"
+import {ImageLayer} from "../canvases/classes/ImageLayer.ts"
+import MainBackgroundFull from "../../assets/mainBackgroundFull.jpeg";
 
-    
+import foreground from "../../assets/mainlayers/foreground v1.png";
+import tree from "../../assets/mainlayers/midground checkpoint v2.png"
+import castle from "../../assets/mainlayers/castlle v1.png";
+import background from "../../assets/mainlayers/foregrounderase.png";
+
+
     const canvas = document.getElementById("garden-canvas") as HTMLCanvasElement
     if (canvas) {
+        const backgroundImage = new Image();
+        backgroundImage.src = MainBackgroundFull.src; // adjust path as needed
 
+        let imageLoaded = false;
+        backgroundImage.onload = () => {
+            imageLoaded = true;
+        };
         const ctx = canvas?.getContext('2d') as CanvasRenderingContext2D;
         const debug = false;
         const targetFPS = 60;
@@ -21,6 +34,7 @@ import {Plant} from "../canvases/classes/Plant.ts"
 
         let foregroundPlants: Plant[] = [];
         let midgroundPlants: Plant[] = [];
+        let imageLayers: ImageLayer[] = [];
         
 
         if (!ctx) {
@@ -28,40 +42,80 @@ import {Plant} from "../canvases/classes/Plant.ts"
         }
 
         
-        function resizeCanvas() {
+        async function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             width = Math.ceil(canvas.width / sideLength)
             height = Math.ceil(canvas.height / sideLength)
 
             midgroundPlants = [
+                new Plant({sideLength, x: 0 - (8 * sideLength), y: canvas.height, delay: 400, opacity: 0.3, parallaxStrength: 0}),
+                new Plant({sideLength, x: 0 - (8 * sideLength), y: canvas.height - sideLength * 98, delay: 400, opacity: 0.3, parallaxStrength: 0}),
+                new Plant({sideLength, x: 0 - (8 * sideLength), y: canvas.height - sideLength * 98 * 2, delay: 400, opacity: 0.3, parallaxStrength: 0}),
 
-                new Plant({sideLength, x: 0 - (8 * sideLength), y: canvas.height, delay: 400, opacity: 0.3, parallaxStrength: 0.015}),
-                new Plant({sideLength, x: 0 - (8 * sideLength), y: canvas.height - sideLength * 98, delay: 400, opacity: 0.3, parallaxStrength: 0.015}),
-                new Plant({sideLength, x: 0 - (8 * sideLength), y: canvas.height - sideLength * 98 * 2, delay: 400, opacity: 0.3, parallaxStrength: 0.015}),
-
-                new Plant({sideLength, x: canvas.width - (35 * sideLength), y: canvas.height, delay: 400, opacity: 0.3, parallaxStrength: 0.015}),
-                new Plant({sideLength, x: canvas.width - (35 * sideLength), y: canvas.height - sideLength * 98, delay: 400, opacity: 0.3, parallaxStrength: 0.015}),
-                new Plant({sideLength, x: canvas.width - (35 * sideLength), y: canvas.height - sideLength * 98 * 2, delay: 400, opacity: 0.3, parallaxStrength: 0.015}),
+                new Plant({sideLength, x: canvas.width - (35 * sideLength), y: canvas.height, delay: 400, opacity: 0.3, parallaxStrength: 0}),
+                new Plant({sideLength, x: canvas.width - (35 * sideLength), y: canvas.height - sideLength * 98, delay: 400, opacity: 0.3, parallaxStrength: 0}),
+                new Plant({sideLength, x: canvas.width - (35 * sideLength), y: canvas.height - sideLength * 98 * 2, delay: 400, opacity: 0.3, parallaxStrength: 0}),
             ]
             foregroundPlants = [
-                new Plant({sideLength, x: - (16 * sideLength), y: canvas.height, parallaxStrength: 0.01}),
-                new Plant({sideLength, x: 0 - (16 * sideLength), y: canvas.height - sideLength * 98, delay: 0, parallaxStrength: 0.01}),
-                new Plant({sideLength, x: 0 - (16 * sideLength), y: canvas.height - sideLength * 98 * 2, delay: 0, parallaxStrength: 0.01}),
+                new Plant({sideLength, x: - (16 * sideLength), y: canvas.height, parallaxStrength: 0}),
+                new Plant({sideLength, x: 0 - (16 * sideLength), y: canvas.height - sideLength * 98, delay: 0, parallaxStrength: 0}),
+                new Plant({sideLength, x: 0 - (16 * sideLength), y: canvas.height - sideLength * 98 * 2, delay: 0, parallaxStrength: 0}),
 
-                
-
-                new Plant({sideLength, x: canvas.width - (27 * sideLength), y: canvas.height, parallaxStrength: 0.01}),
-                new Plant({sideLength, x: canvas.width - (27 * sideLength), y: canvas.height - sideLength * 98, parallaxStrength: 0.01}),
-                new Plant({sideLength, x: canvas.width - (27 * sideLength), y: canvas.height - sideLength * 98 * 2, parallaxStrength: 0.01}),
+                new Plant({sideLength, x: canvas.width - (27 * sideLength), y: canvas.height, parallaxStrength: 0}),
+                new Plant({sideLength, x: canvas.width - (27 * sideLength), y: canvas.height - sideLength * 98, parallaxStrength: 0}),
+                new Plant({sideLength, x: canvas.width - (27 * sideLength), y: canvas.height - sideLength * 98 * 2, parallaxStrength: 0}),
             ]
+
+            imageLayers = [
+                new ImageLayer({
+                    imgMeta: background,
+                    parallaxStrength: 0.003,
+                    scale: 1,
+                    swaySpeed: 0.001,
+                    amplitude: 1,
+                }),
+                new ImageLayer({
+                    imgMeta: castle,
+                    parallaxStrength: 0.015,
+                    scale: 1.2,
+                    swaySpeed: 0.001,
+                    amplitude: 3,
+                }),
+                new ImageLayer({
+                    imgMeta: tree,
+                    parallaxStrength: 0.01,
+                    scale: 1.2,
+                    swaySpeed: 0.002,
+                    amplitude: 2,
+                }),
+                new ImageLayer({
+                    imgMeta: foreground,
+                    parallaxStrength: 0.001,
+                    scale: 1
+                }),
+            ]
+
+            await Promise.all(imageLayers.map(layer => layer.setupImage(canvas)));
         }
 
-        resizeCanvas();
+        
         window.addEventListener('resize', resizeCanvas);
         window.addEventListener('mousemove', (event) => {
             mousePosition = {xPos: event.x, yPos: event.y}
         })
+
+        // Device orientation for mobile parallax
+        window.addEventListener('deviceorientation', (event) => {
+            // gamma: left/right tilt, beta: up/down tilt
+            // Map to screen coordinates
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            // Sensitivity factor for parallax
+            const sensitivity = 20;
+            mousePosition.xPos = centerX + (event.gamma || 0) * sensitivity;
+            mousePosition.yPos = centerY + (event.beta || 0) * sensitivity;
+        });
 
         let lastFrameTime = 0;
         const frameDelay = 1000 / targetFPS;
@@ -69,24 +123,6 @@ import {Plant} from "../canvases/classes/Plant.ts"
         let fps = 0;
         let framesThisSecond = 0;
         let lastFpsUpdate = 0;
-
-        function drawCRTOverlay() {
-        // Scanlines
-            /*ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-            for (let y = 0; y < canvas.height; y += 12) {
-                ctx.fillRect(0, y, canvas.width, 2);
-            }*/
-
-            // Vignette
-            const gradient = ctx.createRadialGradient(
-                canvas.width / 2, canvas.height / 2, canvas.width * 0.3,
-                canvas.width / 3, canvas.height / 2, canvas.width * 0.7
-            );
-            gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
-            gradient.addColorStop(1, 'rgba(0, 0, 0, 0.4)');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            }
 
         function animate(time = 0) {
 
@@ -103,18 +139,25 @@ import {Plant} from "../canvases/classes/Plant.ts"
             }
 
             ctx.clearRect(0, 0, canvas.width, canvas.height)
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
             
+
+            imageLayers.forEach(layer => {
+                layer.update(time, mousePosition);
+                layer.draw(ctx, canvas);
+            });
+
             midgroundPlants.forEach(plant =>plant.update(time, mousePosition));
             midgroundPlants.forEach(plant => plant.draw(ctx, canvas));
             foregroundPlants.forEach(plant =>plant.update(time, mousePosition));
             foregroundPlants.forEach(plant => plant.draw(ctx, canvas));
 
-            //drawCRTOverlay();
 
             requestAnimationFrame(animate)
         }
 
-        animate();
+        resizeCanvas().then(() => animate())
     }
 
 </script>

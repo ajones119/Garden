@@ -12,16 +12,37 @@ const Pages: {href: string, title: string, description: string, imageUrl: ImageM
 
 <Layout hasNavbar>
 	Demos
+	To Do list before posting to full site (not ordered):
+	1. Make Contact page for both of us
+	2. Finish Article for Rainfall Canvas
+	3. Add Article for snowfall Canvas
+	4. add article for sprite canvas
+	5. add article and component for endless carousel
+	7. add page for template examples and side projects
+	8. add page for universal react auto-tooltips 
+	9. document and make basic components using astro and gestures with gsap. should make several examples
+	10. add  some more pixel art flair and finish the switch
+	
     <div class="flex justify-center flex-wrap items-start gap-3 mx-auto">
+		
+		
 		{Pages.map(page => {
 			return (
-				<a href={page.href} class="shadow-sm hover:shadow-lg transition-all  bg-mute hover:border-accent rounded-lg border border-border border-solid w-12/12 sm:w-2/12 md:w-3/12 lg:w-2/12 sm:aspect-square duration-300 sm:min-w-80 max-w-9/12 sm:max-w-80">
+				<a href={page.href} class="h-80 shadow-sm hover:shadow-lg transition-all bg-mute hover:border-accent rounded-lg border border-border border-solid w-full sm:w-80 aspect-[3/4] duration-300 max-w-xs"
+>
 					<div class="flex flex-col h-full">
-						<Image loading="eager" src={page.imageUrl} alt={page.title} class="w-full h-3/4 object-cover rounded-t-lg mb-2" />
-						<div class="p-2">
+						<div class="h-48 w-full overflow-hidden rounded-t-lg">
+							<Image 
+								loading="eager" 
+								src={page.imageUrl} 
+								alt={page.title} 
+								class="w-full h-full object-cover"
+							/>
+						</div>
+						<div class="p-2 flex flex-col justify-between flex-1">
 							<h3 class="text-lg font-semibold">{page.title}</h3>
 							<p class="text-sm text-muted-foreground">{page.description}</p>
-							<p class="text-sm text-muted-foreground"><b>Planted: </b>{page.createdAt.getMonth() + 1}/{page.createdAt.getDate()}/{page.createdAt.getFullYear()}</p>
+							<p class="text-sm text-muted-foreground"><b>Planted:</b> {page.createdAt.getMonth() + 1}/{page.createdAt.getDate()}/{page.createdAt.getFullYear()}</p>
 						</div>
 					</div>
 				</a>

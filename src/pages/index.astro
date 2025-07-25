@@ -14,85 +14,31 @@ import MainBackdrop from "../components/MainBackdrop/index.astro"
 		<div class="absolute top-0 left-0 w-dvw h-dvh z-0">
 			<MainBackdrop />
 		</div>
-		<div class="absolute w-full h-full flex items-center justify-evenly gap-4 z-10">
+		<div class="bg-[rgba(250, 250, 250, 0.5)] absolute w-full h-full flex items-center justify-evenly gap-4 z-10">
 			
 
-			<div id="crt" data-display="baseDisplay" class=" h-dvh relative rounded-lg border-accent border-1 border-solid max-w-10/12 min-w-10/12 p-6 lg:p-10 justify-between items-center gap-3 grid grid-cols-1 md:grid-cols-2">
-				<div id="leftGraphic" class="relative">
-					<div id="baseDisplay">
-					<pre  class="text-accent font-mono text-2xs leading-none scale-35 mx-auto origin-top-left md:origin-left md:scale-50 xl:scale-75 ">
- _   _        _  _          _____  _                        _ 
-| | | |      | || |        |_   _|| |                      | |
-| |_| |  ___ | || |  ___     | |  | |__    ___  _ __   ___ | |
-|  _  | / _ \| || | / _ \    | |  | '_ \  / _ \| '__| / _ \| |
-| | | ||  __/| || || (_) |   | |  | | | ||  __/| |   |  __/|_|
-\_| |_/ \___||_||_| \___/    \_/  |_| |_| \___||_|    \___|(_)
+			<div data-display="baseDisplay" class="bg-[#fafafa40] hidden container relative rounded-lg border-border border-1 border-solid p-6 lg:p-10">
+				Welcome!
 
-Welcome to the Arcane Terminal!
-					</pre>
-					</div>
-					<div id="demos-display" class="hidden">
-						<pre  class="text-accent font-mono leading-none">
-				___
-			  /     \
-			 /       \
-			/         \
-		    |  ᚠᚢᚦᚨᚱᚲ  |
-		    |  ᚷᚹᚺᚾᛁᛃ  |
-		    |  ᛇᛈᛉᛊᛋᛏ  |
-		    |          |
-		    |    ᚱᚾᛟ   |
-		    \         /
-			 \_______/
-
-Demos and small explorations into code concepts
-						</pre>
-					</div>
-					<div id="projects-display" class="hidden">
-						<pre class="text-accent font-mono leading-none hiden">
-	Constructs
-
-						</pre>
-					</div>
-					<div id="about-me-display" class="hidden">
-						<pre class="text-accent font-mono leading-none scale-35 md:scale-50 xl:scale-75 ">
-.....:+.........................................................
-....#+#%%#-.....................................................
-..-#*#%%**#*...................::------:........................
-.-###%%#*##****=::::::::..::..::::::::-:........................
-:###%%%#%#%++==++**+::::::::::::::::::--........................
-*%%@@%#%#%#****+++=+****=:.-::::::--::-:........................
-#%@@%%%#%%#%*+=**=++++++*##+-:::::-=:::-:..:::..................
-%%@%%%%%%%%%%%##*#*****+++++**#+---=:-:---::::..................
-=+*%#%#%%%%%%%%%%%%****##++*+++**###+---=-::::::--::............
-=+++***##*#%%%%%%%%%%##%+***#+***++++*##+--::.:::::::--:........
---++++=+=++=++#%%%%%%%%%#+%#**+*****++=+***#*-::--=-::-.........
---::-=+-==+=====++#%%%%%%%%%%%%*#+*#+**+++++***#+------.........
-------::::--==++++++**#%%%%%%%%%#*%%******++++++**#*+...........
-:::::::::::-::---=++***++**#%%%%%%%%%%%%*###++*++++***#%**+*+:..
-::::::::::--..--::-::=*++**++++#%%%%%%%%%%%%#+*+******+-*==#***:
-:::=:.:=-:.::..-:::-.:=::=+++*+++++#%%%%%%%%%%%#%#+=##**+**#%+#:
-::.::..:-..:-..:-.:::::::::::-++++*++*##%%@%%%%%%%%%%%###%##*=-.
-:-:.--:.::..-::-:...:-....:::::::-*********#%%%%%%%@%#%%%%%#*+:.
-:=:.--::::.........:-::::::....:::--=+++++*+**##%%@@%%#%%%#*#-..
-.:-..:-..-:......::-..:-:...:-.:::--:-:===+*+**+****#@#%%%%%#:..
-:.:=.:-......::.----::.....::::-.:-.:=:--:=*++++++==.=#%%%#*....
-						</pre>
-					</div>
-					<div id="widgets-display" class="hidden">
-						<pre class="text-accent font-mono leading-none ">
-	widgset
-						</pre>
+				<div id="demos" class="w-full border-y p-2">
+					<h6 class="w-full mb-1 text-2xl hover:underline font-bold ">Demos</h6>
+					<div id="demoRow" class="w-full">
+						<div id="demo-card" class="size-40 rounded flex flex-col items-center justify-center border-accent border p-1">
+							Some content
+						</div>
 					</div>
 				</div>
-				<div class="flex flex-col gap-3 justify-start grow">
-					<p id="scramble1" class="text-foreground font-epic">Where would you like to go?</p>
-					<div class="flex flex-wrap gap-2 justify-between items-center">
-						<a name="demos" href="/demos"  class="font-epic min-w-5/12 w-5/12 text-foreground cursor-pointer border-b border-b-accent hover:border-b-foreground nav-button focus:animate-pulse hover:animate-pulse ">Runestone</a>
-						<button name="projects" class=" font-epic min-w-5/12 w-5/12 text-foreground cursor-pointer border-b border-b-accent hover:border-b-foreground nav-button focus:animate-pulse hover:animate-pulse">Constructs</button>
-						<button name="about-me" class=" font-epic min-w-5/12 w-5/12 text-foreground cursor-pointer border-b border-b-accent hover:border-b-foreground nav-button focus:animate-pulse hover:animate-pulse">The Scribe</button>
-						<button name="widgets" class="font-epic min-w-5/12 w-5/12 text-foreground cursor-pointer border-b border-b-accent hover:border-b-foreground nav-button focus:animate-pulse hover:animate-pulse">Relics</button>
-
+				<div class="overflow-hidden whitespace-nowrap">
+					<h1 id="gradientText" class="text-4xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent animate-gradient-move">
+						Shimmering Gradient Text
+					</h1>
+				</div>
+				<div id="projects" class="w-full border-y p-2">
+					<h6 class="w-full mb-1 text-2xl">Projects</h6>
+					<div id="projectsRow" class="w-full">
+						<div id="projectCard-card" class="size-40 rounded flex flex-col items-center justify-center border-accent border p-1">
+							Some content
+						</div>
 					</div>
 				</div>
 			</div>
@@ -122,24 +68,26 @@ Demos and small explorations into code concepts
 		})
 	}
 
-
-	//initialize button listeners
-	function setLeftDisplay(id = "baseDisplay"){
-		console.log('ran set', id)
-		const children = document.getElementById('leftGraphic')?.children || [];
-		console.log(children.length)
-		for(let i = 0; i < children.length; i++) {
-			const childId = children[i].getAttribute('id');
-			console.log(childId, id + -'-display')
-			if (childId === id + '-display') {
-				children[i].classList.remove("hidden")
-				
-				document.getElementById('crt')?.setAttribute('data-display', id)
-			} else if (!children[i].classList.contains("hidden")) {
-				children[i].classList.add("hidden")
+	const sectionTitle = document.getElementById("gradientText");
+	if (sectionTitle) {
+		gsap.to(sectionTitle, {
+			duration: 1.5,
+			scrambleText: {
+				text: "Demos",
+				speed: 3,
+				chars: scrambleTextBase
 			}
-		}
+		})
+
+		gsap.to("#animated-text", {
+			backgroundPosition: "200% 50%",
+			duration: 3,
+			repeat: -1,
+			yoyo: true,
+			ease: "sine.inOut"
+		});
 	}
+
 
 	const navButtons = document.getElementsByClassName("nav-button")
 	for (let i = 0; i < navButtons.length; i++) {
@@ -151,7 +99,6 @@ Demos and small explorations into code concepts
 		})
 		navButtons[i].addEventListener('mouseenter', () => {
 			const name = navButtons[i].getAttribute('name')
-			setLeftDisplay(name || undefined)		
 		})
 	}
 

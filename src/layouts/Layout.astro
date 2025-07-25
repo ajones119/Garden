@@ -10,7 +10,7 @@ const {hasNavbar} = Astro.props
 // Re-apply dark mode on client-side navigation (Astro, SPA, etc)
 (function() {
   function applyTheme() {
-    var scheme = localStorage.getItem('color-scheme');
+    var scheme = localStorage.getItem('color-scheme') || 'dark';
     if (scheme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {

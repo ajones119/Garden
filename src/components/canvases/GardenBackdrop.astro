@@ -18,7 +18,7 @@ import background from "../../assets/mainlayers/foregrounderase.png";
     if (canvas) {
        
         const ctx = canvas?.getContext('2d') as CanvasRenderingContext2D;
-        const targetFPS = 60;
+        let targetFPS = 60;
         let sideLength = 4;
         let height = 0;
         let width = 0
@@ -43,6 +43,7 @@ import background from "../../assets/mainlayers/foregrounderase.png";
             if (width < 650) {
                 midgroundPlants = []
                 foregroundPlants = []
+                targetFPS = 30;
             } else {
 
                 midgroundPlants = [

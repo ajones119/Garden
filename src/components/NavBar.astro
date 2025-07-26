@@ -10,37 +10,30 @@ const {contentContainerId = ""} = Astro.props;
     class="fixed top-0 left-0 right-0 z-50 h-[48px] w-full bg-accent transition-transform duration-300 ease-in-out"
 >
     <div class="mx-auto h-full flex items-center justify-between px-4">
-        <a href="/" class="text-foreground font-bold text-lg">Aramis' Garden</a>
+        <a href="/" class="text-foreground font-bold text-lg">Garden ICON TBD</a>
         <ul class="space-x-4 hidden md:flex">
             <li><ThemeToggle /></li>
             <li><a href="/demos" class="text-foreground hover:text-gray-300">Demos</a></li>
-            <li><a href="/about" class="text-foreground hover:text-gray-300">About</a></li>
-            <li><a href="/contact" class="text-foreground hover:text-gray-300">Contact</a></li>
+            <li><a href="/projects" class="text-foreground hover:text-gray-300">Projects</a></li>
         </ul>
         <button id="menuToggle" class="text-foreground md:hidden hover:scale-110 focus:outline-none transition-all duration-100">
+        <!-- MAKE SVG ANIMATION TO X BUTTON WITH GSAP -->
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
             </svg>
         </button>
     </div>
     <div id="mobile-nav-container" class="hidden fixed top-[48px] left-0 w-dvw h-dvh z-50 backdrop-blur-xs md:hidden">
-        <div id="mobie-nav-menu" class="fixed bg-muted w-8/12 xs:w-6/12 sm:w-4-12 h-full overflow-hidden ">
+        <div id="mobile-nav-menu" class="fixed bg-muted w-8/12 xs:w-6/12 sm:w-4-12 h-full overflow-hidden ">
             <ul class="p-4">
                 <li class="text-muted-foreground transition-colors hover:text-foreground hover:underline">
                     <a href="/">Home</a>
                 </li>
                 <li class="text-muted-foreground transition-colors hover:text-foreground hover:underline">
-                <a href="/">Home</a>
+                <a href="/demos">Demos</a>
                 </li>
                     <li class="text-muted-foreground transition-colors hover:text-foreground hover:underline">
-                    <a href="/">Home</a>
-                </li>
-                    <li class="text-muted-foreground transition-colors hover:text-foreground hover:underline">
-                    <a href="/">Home</a>
-                </li>
-                    <li class="text-muted-foreground transition-colors hover:text-foreground hover:underline">
-                    <a href="/">Home</a>
-                </li>
+                    <a href="/projects">Projects</a>
             </ul>
         </div>
         
@@ -53,7 +46,7 @@ const {contentContainerId = ""} = Astro.props;
     let isMobileMenuOpen = false;
     const menuToggle = document.getElementById("menuToggle");
     const mobileNavContainer = document.getElementById("mobile-nav-container");
-    const mobileNavMenu = document.getElementById("mobie-nav-menu");
+    const mobileNavMenu = document.getElementById("mobile-nav-menu");
 
     if (navbarElement && menuToggle && mobileNavContainer && mobileNavMenu) {
         let currentScroll = 0;

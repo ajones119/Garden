@@ -57,30 +57,36 @@ const {hasNavbar} = Astro.props
 
 	// Device orientation permission prompt
 	function setupDeviceOrientation() {
-		if (
-			typeof window.DeviceOrientationEvent !== 'undefined' &&
-			'requestPermission' in window.DeviceOrientationEvent &&
-			typeof window.DeviceOrientationEvent.requestPermission === 'function'
-		) {
-			// iOS/Safari: show button to request permission
-			let btn = document.createElement('button');
-			btn.textContent = 'Enable Device Orientation';
-			btn.style.position = 'fixed';
-			btn.style.bottom = '24px';
-			btn.style.right = '24px';
-			btn.style.zIndex = '10000';
-			btn.style.padding = '12px 20px';
-			btn.style.fontSize = '1rem';
-			btn.style.background = '#222';
-			btn.style.color = '#fff';
-			btn.style.border = 'none';
-			btn.style.borderRadius = '8px';
-			btn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
-			btn.style.cursor = 'pointer';
-			document.body.appendChild(btn);
-			btn.addEventListener('click', function() {
+	if (
+		typeof window.DeviceOrientationEvent !== 'undefined' &&
+		'requestPermission' in window.DeviceOrientationEvent &&
+		typeof window.DeviceOrientationEvent.requestPermission === 'function'
+	) {
+		// Only show button if permission not already granted in this session
+		if (sessionStorage.getItem('device-orientation-granted') === 'true') {
+			window.dispatchEvent(new CustomEvent('deviceorientationpermissiongranted'));
+			return;
+		}
+		let btn = document.createElement('button');
+		btn.textContent = 'Enable Device Orientation';
+		btn.style.position = 'fixed';
+		btn.style.bottom = '24px';
+		btn.style.right = '24px';
+		btn.style.zIndex = '10000';
+		btn.style.padding = '12px 20px';
+		btn.style.fontSize = '1rem';
+		btn.style.background = '#222';
+		btn.style.color = '#fff';
+		btn.style.border = 'none';
+		btn.style.borderRadius = '8px';
+		btn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+		btn.style.cursor = 'pointer';
+		document.body.appendChild(btn);
+		btn.addEventListener('click', function() {
+			if (window.DeviceOrientationEvent) {
 				window.DeviceOrientationEvent?.requestPermission().then((state: string) => {
 					if (state === 'granted') {
+						sessionStorage.setItem('device-orientation-granted', 'true');
 						window.dispatchEvent(new CustomEvent('deviceorientationpermissiongranted'));
 						btn.remove();
 					} else {
@@ -89,11 +95,12 @@ const {hasNavbar} = Astro.props
 				}).catch(() => {
 					alert('Permission request failed.');
 				});
-			});
-		} else {
-			// Non-iOS: permission not required, fire event immediately
-			window.dispatchEvent(new CustomEvent('deviceorientationpermissiongranted'));
-		}
+			}
+		});
+	} else {
+		// Non-iOS: permission not required, fire event immediately
+		window.dispatchEvent(new CustomEvent('deviceorientationpermissiongranted'));
+	}
 	}
 	setupDeviceOrientation();
 

@@ -1,5 +1,27 @@
 @import "tailwindcss";
 
+@utility no-scrollbars {
+      scrollbar-width: none;
+      -ms-overflow-style: none; /* For Internet Explorer and Edge */
+    }
+
+@utility animate-gradient-move {
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+}
+
+ @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
 @theme {
   --color-background: #f3f4f6; /* neutral light gray */
   --color-foreground: #111827; /* near-black text */

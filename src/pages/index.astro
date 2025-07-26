@@ -1,12 +1,9 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
 import PageSection from "../layouts/PageSection.astro"
 import MainBackdrop from "../components/MainBackdrop/index.astro"
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
-
+let isMenuOpen = true;
 ---
 
 <Layout>
@@ -14,30 +11,32 @@ import MainBackdrop from "../components/MainBackdrop/index.astro"
 		<div class="absolute top-0 left-0 w-dvw h-dvh z-0">
 			<MainBackdrop />
 		</div>
-		<div class="bg-[rgba(250, 250, 250, 0.5)] absolute w-full h-full flex items-center justify-evenly gap-4 z-10">
-			
-
-			<div data-display="baseDisplay" class="bg-[#fafafa40] hidden container relative rounded-lg border-border border-1 border-solid p-6 lg:p-10">
-				Welcome!
+		<div id="menu" class="bg-[rgba(250, 250, 250, 0.5)] absolute w-full h-full flex items-center justify-evenly gap-4 z-10">
+			<div data-display="baseDisplay" class="bg-[#fafafa40] container relative rounded-lg border-border border-1 border-solid p-6 lg:p-10">
+				<button id="hideMenu" class="cursor-pointer">Welcome! (click here to hide menu)</button>
 
 				<div id="demos" class="w-full border-y p-2">
-					<h6 class="w-full mb-1 text-2xl hover:underline font-bold ">Demos</h6>
+					<a href="/demos">
+						<h1 id="demoTitle" class="py-2 text-4xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent animate-gradient-move">
+							Cool Demos
+						</h1>
+					</a>
 					<div id="demoRow" class="w-full">
-						<div id="demo-card" class="size-40 rounded flex flex-col items-center justify-center border-accent border p-1">
-							Some content
+						<div id="demo-card" class="hover:underline size-40 rounded flex flex-col items-center justify-center border-accent border p-1">
+							Some content make this a carousel with recent 10 
 						</div>
 					</div>
 				</div>
-				<div class="overflow-hidden whitespace-nowrap">
-					<h1 id="gradientText" class="text-4xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent animate-gradient-move">
-						Shimmering Gradient Text
-					</h1>
-				</div>
+				
 				<div id="projects" class="w-full border-y p-2">
-					<h6 class="w-full mb-1 text-2xl">Projects</h6>
+					<a href="/projects">
+						<h1 id="projectsTitle" class="py-2 scramble text-4xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-red-500 bg-clip-text text-transparent animate-gradient-move hover:from-pink-500 hover:via-purple-500 hover:to-blue-500 cursor-pointer">
+							Projects
+						</h1>
+					</a>
 					<div id="projectsRow" class="w-full">
 						<div id="projectCard-card" class="size-40 rounded flex flex-col items-center justify-center border-accent border p-1">
-							Some content
+							Some content make this a carousel with recent 10 
 						</div>
 					</div>
 				</div>
@@ -52,9 +51,6 @@ import MainBackdrop from "../components/MainBackdrop/index.astro"
 	import { ScrambleTextPlugin } from "gsap/all";
 	gsap.registerPlugin(ScrambleTextPlugin) 
 
-	//Screen Graphic Initialize
-	const graphicContainer = document.getElementById("crt")
-
 	//Scramble Controls
 	const scramble1 = document.getElementById("scramble1");
 	if (scramble1) {
@@ -68,38 +64,35 @@ import MainBackdrop from "../components/MainBackdrop/index.astro"
 		})
 	}
 
-	const sectionTitle = document.getElementById("gradientText");
-	if (sectionTitle) {
-		gsap.to(sectionTitle, {
-			duration: 1.5,
-			scrambleText: {
-				text: "Demos",
-				speed: 3,
-				chars: scrambleTextBase
-			}
-		})
+	gsap.to("#demoTitle", {
+		duration: 1.5,
+		scrambleText: {
+			text: "Demos",
+			speed: 3,
+			chars: scrambleTextBase
+		}
+	})
 
-		gsap.to("#animated-text", {
-			backgroundPosition: "200% 50%",
-			duration: 3,
-			repeat: -1,
-			yoyo: true,
-			ease: "sine.inOut"
+	gsap.to("#projectsTitle", {
+		duration: 1.5,
+		scrambleText: {
+			text: "Projects",
+			speed: 3,
+			chars: scrambleTextBase
+		}
+	})
+	
+	const hideMenuButton = document.getElementById("hideMenu");
+	const menu = document.getElementById("menu");
+	if (hideMenuButton && menu) {
+		hideMenuButton.addEventListener('click', (e) => {
+			e.stopPropagation(); // prevent bubbling if needed
+			console.log("CLICKED");
+			menu.classList.add("hidden");
 		});
-	}
 
-
-	const navButtons = document.getElementsByClassName("nav-button")
-	for (let i = 0; i < navButtons.length; i++) {
-		gsap.to(navButtons[i], {
-			backgroundColor: "grey",
-			duration: 0.2,
-			yoyo: true,
-			repeat: -1,
-		})
-		navButtons[i].addEventListener('mouseenter', () => {
-			const name = navButtons[i].getAttribute('name')
+		document.addEventListener("click", (e) => {
+			menu.classList.remove("hidden")
 		})
 	}
-
 </script>

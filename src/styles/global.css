@@ -22,6 +22,37 @@
     }
   }
 
+@utility animate-pop-in {
+  animation: pop-in 0.5s ease;
+}
+
+ @keyframes pop-in {
+    0% {
+      scale: 0;
+    }
+    60% {
+      scale: 1.1;
+    }
+    100% {
+      scale: 1;
+    }
+  }
+
+@utility animate-slide-in {
+animation: slide-in 0.2s ease;
+}
+
+@keyframes slide-in {
+  0% {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
 @theme {
   --color-background: #f3f4f6; /* neutral light gray */
   --color-foreground: #111827; /* near-black text */

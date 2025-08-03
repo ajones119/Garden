@@ -1,3 +1,6 @@
+/** @jsxImportSource solid-js */
+
+
 // src/components/Slider.solid.tsx
 import { createSignal, onCleanup } from "solid-js";
 

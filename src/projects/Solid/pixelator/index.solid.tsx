@@ -1,10 +1,12 @@
+/** @jsxImportSource solid-js */
+
 import { createSignal, Show, type Accessor } from "solid-js";
 import { PixelatorCanvas, PixelateCanvas } from "./components/PixelCanvas";
-import Slider from "../../../components/Inputs/Slider/Slider.solid";
-import FileInput from "../../../components/Inputs/FileInput/FileInput.solid";
+import Slider from "../../../components/Solid/Slider/Slider.solid";
+import FileInput from "../../../components/Solid/FileInput/FileInput.solid";
 
-import TEMP_IMG from "../../../assets/mainBackgroundFull.jpeg"
-import BasicButton from "../../../components/Buttons/BasicButton.solid";
+import BasicButton from "../../../components/Solid/Buttons/BasicButton.solid";
+import type { ImageMetadata } from "astro";
 
 const PixelateAndDownloadImage = (imageData: ImageMetadata, pixelSize: number) => {
     const canvas = document.createElement('canvas');

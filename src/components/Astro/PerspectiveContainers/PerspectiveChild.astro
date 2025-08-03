@@ -1,0 +1,44 @@
+---
+const {
+  id,
+  translate3dX = 0,
+  translate3dY = 0,
+  translate3dZ = 0,
+  rotateX = 0,
+  rotateY = 0,
+  rotateZ = 0,
+  square = false,
+  showAxis = false,
+  className = ""
+} = Astro.props;
+---
+
+<div
+  id={id}
+  class={`size-full aspect-square border-accent border-solid border ${square ? "" : "rounded-full"} absolute perspective-child ${className}`}
+  style={`
+    transform-style: preserve-3d;
+    transform:
+      translate3d(${translate3dX}px, ${translate3dY}px, ${translate3dZ})
+      rotateX(${rotateX}deg)
+      rotateY(${rotateY}deg)
+      rotateZ(${rotateZ}deg);
+  `}
+>
+  {showAxis && (
+    <div class="absolute left-1/2 top-1/2 h-0 w-0" style="transform: translate(-50%, -50%);">
+      <!-- X Axis (Red) -->
+      <div class="absolute h-[2px] w-[200px] bg-red-500" style="transform: translateX(-100px);"></div>
+      
+      <!-- Y Axis (Green) -->
+      <div class="absolute w-[2px] h-[200px] bg-green-500" style="transform: translateY(-100px);"></div>
+      
+      <!-- Z Axis (Blue) -->
+      <div class="absolute w-[2px] h-[200px] bg-blue-500" style="transform: translateZ(-100px);"></div>
+      <div class="absolute w-[2px] h-[200px] bg-blue-500" style="transform: translateZ(100px);"></div>
+    </div>
+  )}
+  
+  <slot />
+</div>
+

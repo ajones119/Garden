@@ -72,10 +72,8 @@ const {dateAdded = "", title = "", topics = [], sections = []} = Astro.props as 
 
     if (topNavBar) {
         const offset = topNavBar.clientHeight;
-        console.log("offset", offset);
 
         const onScroll = () => {
-            console.log("onscroll")
             let currentSectionId = "";
 
             sections.forEach((section) => {
@@ -87,7 +85,6 @@ const {dateAdded = "", title = "", topics = [], sections = []} = Astro.props as 
                     }
                 }
             });
-            console.log("currentSectionId", currentSectionId);
             navLinks.forEach((link) => {
                 const href = link.getAttribute("href");
                 link.classList.remove("font-bold", "text-smaragdine");

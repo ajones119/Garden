@@ -50,3 +50,12 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+
+
+## Info for this Repo (ReadME will get full update later on!)
+
+We currently have Solid and React components, you can see that ALL Solid components are within some **/Solid/* directory, and have a `/** @jsxImportSource solid-js */` line at the top of the file. this is so we can tell the compiler to compile with Solid-js in mind rather than react. React files are also in **/React/*, but they do not have an import source line.
+
+Otherwise, Project code can go into the Projects directory, where it can be used on its corresponding projects page!
+

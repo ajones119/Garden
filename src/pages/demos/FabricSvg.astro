@@ -1,11 +1,11 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import Satin from "../../assets/demoImages/svgFabric/fabric2.avif";
-import Slider from "../../components/Inputs/Slider/Slider.astro"
+import Slider from "../../components/Astro/Inputs/Slider/Slider.astro"
 
 import BaseDemoLayout from "../../layouts/demo/BaseDemoLayout.astro";
 import type { BaseDemoLayoutProps } from "./types";
-import CodeBlock from "../../components/CodeBlock.astro";
+import CodeBlock from "../../components/Astro/CodeBlock.astro";
 import DemoSubsection from "../../layouts/demo/DemoSubsection.astro";
 
 const base: BaseDemoLayoutProps = {
@@ -174,7 +174,6 @@ const base: BaseDemoLayoutProps = {
 
 	const imageText = document.getElementById("imageText") as HTMLElement
 	const displacementMap = document.getElementById("displacement-map") as HTMLElement
-	console.log(imageText, displacementMap)
 	if (imageText && displacementMap) {
 		
 		xSlider?.addEventListener('input', (e) => {
@@ -193,7 +192,6 @@ const base: BaseDemoLayoutProps = {
 		displacementSlider?.addEventListener('input', (e) => {
 			const target = e?.target as HTMLInputElement;
 			const value = target.value;
-			console.log("scale")
 			displacementMap.setAttribute('scale', `${value}`)
 		});
 	}

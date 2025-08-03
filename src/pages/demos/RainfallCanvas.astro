@@ -4,9 +4,9 @@ import Layout from "../../layouts/Layout.astro";
 import { Image } from 'astro:assets'
 import BaseDemoLayout from "../../layouts/demo/BaseDemoLayout.astro";
 import type { BaseDemoLayoutProps } from "./types";
-import RainfallCanvasBackdrop from "../../components/canvases/RainBackdrop.astro"
+import RainfallCanvasBackdrop from "../../components/Astro/canvases/RainBackdrop.astro"
 import DemoSubsection from "../../layouts/demo/DemoSubsection.astro";
-import CodeBlock from "../../components/CodeBlock.astro";
+import CodeBlock from "../../components/Astro/CodeBlock.astro";
 
 const base: BaseDemoLayoutProps = {
 		dateAdded: "07/15/2025",
@@ -34,11 +34,11 @@ const base: BaseDemoLayoutProps = {
 
   <!-- Content: centers vertically and horizontally -->
   <div class="relative z-10 flex flex-col items-center justify-center min-h-[100dvh] gap-6 px-4">
-    <div class="p-4 min-w-fit border border-border rounded-md surface text-foreground w-full max-w-md hover:bg-muted transition-all">
-      <p>Here's a simple canvas animation of rain falling</p>
+    <div class="p-4 w-fit border border-border rounded-md surface text-foreground max-w-md hover:bg-muted transition-all">
+      <p class="text bg-gradient-to-bl from-teal-300 via-green-500 to-blue-500 animate-gradient-move text-transparent bg-clip-text">Release your inhibitions</p>
     </div>
-    <div class="p-4 min-w-fit border border-border rounded-md surface text-foreground w-full max-w-md hover:bg-muted transition-all">
-      <p>with the added flair of splashing on html elements rendered within its parent!</p>
+    <div class="p-4 min-w-fit border border-border rounded-md surface text-foreground max-w-md hover:bg-muted transition-all">
+      <p class="text-2xl font-bold bg-gradient-to-tr from-teal-300 via-green-500 to-blue-500 animate-gradient-move text-transparent bg-clip-text">Feel the rain on your skin</p>
     </div>
   </div>
 </div>
@@ -203,7 +203,91 @@ animate()
 `}
         </CodeBlock>
     </DemoSubsection>
-    <DemoSubsection id="final-code" title="Final Code">
+    <DemoSubsection id="detect-elements" title="Detect HTML Elements">
+      <p>To make the rain feel more grounded in the page, I wanted the drops to "splash" when they hit real HTML elements—specifically, the cards and buttons inside the parent container.</p>
+      <br />
+      <p>I used <code>getBoundingClientRect()</code> to calculate where these elements are positioned relative to the canvas. Then I update their positions on <code>resize</code> and <code>scroll</code>, storing them in a shared <code>surfacePositions</code> array that’s used for collision detection.</p>
+<CodeBlock>
+{`
+function updateElementPositions() {
+  const canvasRect = canvas.getBoundingClientRect();
+  const container = canvas.parentElement.parentElement;
+  container.querySelectorAll(".surface").forEach((button) => {
+    const rect = button.getBoundingClientRect();
+      surfacePositions.push({
+        top: rect.top - canvasRect.top,
+        left: rect.left - canvasRect.left,
+        right: rect.right - canvasRect.left,
+        bottom: rect.bottom - canvasRect.top,
+        width: rect.width,
+        height: rect.height,
+      });
+    });
+  }
+`}
+</CodeBlock>
+
+<p>Each drop checks whether its position intersects one of these rectangles using <code>nodeCollideWithElement</code>:</p>
+<CodeBlock>
+  {`
+function nodeCollideWithElement(x, y){ 
+  return surfacePositions.some((pos) => {
+    return x < pos.right && x > pos.left && y < pos.bottom && y > pos.top;
+    });
+  }
+`} </CodeBlock>
+<p>If a collision is detected, the drop resets and a set of splash particles is spawned at the impact point. This gives a lovely tactile reaction that ties the canvas into the UI rather than floating on top of it.</p> </DemoSubsection>
+<DemoSubsection id="splash" title="Splash">
+  <p>When a rain drop hits an element, I wanted a little spark of feedback — something subtle but visually satisfying. I achieved this by generating a few <code>SplashDrop</code> particles at the point of impact. Each splash is just a small particle with basic gravity and velocity, giving it a quick arc motion before falling out of view.</p>
+  <CodeBlock> {`
+class SplashDrop { x = 0; y = 0; vx = 0; vy = 0; gravity = 0.4; radius = 0.5; canRemove = false;
+  constructor(x, y, angle = Math.PI / 4, speed = 0.25) {
+    this.x = x;
+    this.y = y;
+    this.vx = Math.cos(angle) * speed;
+    this.vy = Math.sin(angle) * -speed;
+  }
+
+  update(deltaTime) {
+    this.vy += (this.gravity * deltaTime) / 1000;
+    this.x += this.vx * deltaTime;
+    this.y += this.vy * deltaTime;
+
+    if (this.y > canvas.height) {
+      this.canRemove = true;
+    }
+  }
+
+  draw(ctx) {
+    ctx.beginPath();
+    ctx.fillStyle = mainFill;
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+`}
+</CodeBlock>
+<br />
+<p>Each splash drop fades naturally as it falls off screen. In the animation loop, splashes are updated and drawn just like raindrops — and removed once they're done:</p>
+<CodeBlock>{
+`
+splashes.forEach((splash) => { splash.update(delta);
+splash.draw(ctx); });
+splashes = splashes.filter((splash) => !splash.canRemove);
+`} </CodeBlock>
+  <br />
+  <p>To create the splash, I spawn 3 particles at slightly different angles when a raindrop hits an HTML element:</p>
+<CodeBlock> {`
+if (nodeCollideWithElement(this.x, this.y)) {
+  splashes.push(new SplashDrop(this.x, this.y, Math.PI / 3));
+  splashes.push(new SplashDrop(this.x, this.y, Math.PI / 2));
+  splashes.push(new SplashDrop(this.x, this.y, Math.PI / 1.25));
+  this.reset();
+} `} </CodeBlock>
+<br />
+<p>It's a subtle but effective way to make the rain feel reactive and alive, especially when it interacts with hoverable or clickable areas in the UI.</p> </DemoSubsection>
+
+<DemoSubsection id="final-code" title="Final Code">
         <p class="codepen" data-height="600" data-default-tab="html,result" data-slug-hash="EaVKNGR" data-pen-title="Rain Canvas" data-user="Aramis-Jones" style="height: 300px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;">
   <span>See the Pen <a href="https://codepen.io/Aramis-Jones/pen/EaVKNGR">
   Rain Canvas</a> by Aramis Jones (<a href="https://codepen.io/Aramis-Jones">@Aramis-Jones</a>)

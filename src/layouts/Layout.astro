@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import NavBar from "../components/NavBar.astro"
+import NavBar from "../components/Astro/NavBar.astro"
 
 const {hasNavbar} = Astro.props
 ---
@@ -18,12 +18,14 @@ const {hasNavbar} = Astro.props
 	}
 
 	document.documentElement.classList.add('scroll-smooth');
+	document.documentElement.classList.add('[scroll-padding-top:64px]');
+	
   }
   applyTheme();
   window.addEventListener('astro:after-swap', applyTheme);
 })();
 </script>
-<html lang="en" class=`bg-background scroll-smooth ${hasNavbar ? "[scroll-padding-top:56px]" : ""}`>
+<html lang="en" class={`bg-background scroll-smooth`}>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
@@ -35,7 +37,7 @@ const {hasNavbar} = Astro.props
 		<meta name="generator" content={Astro.generator} />
 		<title>Garden</title>
 	</head>
-	<body class="text-foreground bg-background">
+	<body class={`text-foreground bg-background`}>
 		{hasNavbar && <NavBar />}
 		<div id="pageContent" class={`${hasNavbar ? "mt-[48px]" : ""} transition-all duration-200`}><slot /></div>
 	</body>

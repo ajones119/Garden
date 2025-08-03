@@ -1,3 +1,5 @@
+import type { ImageMetadata } from "astro";
+
 type ImageLayerProps = {
     imgMeta: ImageMetadata;
     parallaxStrength?: number;
@@ -58,7 +60,6 @@ export class ImageLayer {
                 }
                 this.width = img.width * scale;
                 this.height = img.height * scale;
-                console.log("img width", img.width, "img height", img.height);
 
                 this.x = (maxWidth - this.width) / 2;
                 this.y = (maxHeight - this.height) / 2;

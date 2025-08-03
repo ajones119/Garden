@@ -1,4 +1,4 @@
-
+/** @jsxImportSource solid-js */
 type BasicButtonProps = {
     onClick: () => void;
     addedClass?: string;

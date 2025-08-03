@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PageSection from "../layouts/PageSection.astro"
-import MainBackdrop from "../components/MainBackdrop/index.astro"
+import MainBackdrop from "../components/Astro/MainBackdrop/index.astro"
 
 let isMenuOpen = true;
 ---
@@ -87,7 +87,6 @@ let isMenuOpen = true;
 	if (hideMenuButton && menu) {
 		hideMenuButton.addEventListener('click', (e) => {
 			e.stopPropagation(); // prevent bubbling if needed
-			console.log("CLICKED");
 			menu.classList.add("hidden");
 		});
 

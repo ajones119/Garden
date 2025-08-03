@@ -1,3 +1,5 @@
+/** @jsxImportSource solid-js */
+
 import { onMount, onCleanup, createSignal, createEffect, type Accessor } from 'solid-js'
 
 type Props = {
@@ -50,7 +52,6 @@ export const PixelatorCanvas = (props: Props) => {
             }
             const width = img.width;
             const height = img.height;
-            console.log("img width", img.width, "img height", img.height);
 
             canvas.width = maxWidth;
             canvas.height = maxHeight;

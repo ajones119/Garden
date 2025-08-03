@@ -1,3 +1,5 @@
+/** @jsxImportSource solid-js */
+
 import { createSignal, onCleanup } from "solid-js";
 
 type FileDropzoneProps = {

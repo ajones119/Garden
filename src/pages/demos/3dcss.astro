@@ -21,6 +21,7 @@ const base: BaseDemoLayoutProps = {
             { id: "perspective", title: "Perspective" },
             { id: "vanishing-point", title: "Vanishing Point" },
             { id: "child-transformations", title: "Child Transformations" },
+            { id: "preserve-3d", title: "Preserve 3d" },
 		]
 	};
 
@@ -507,46 +508,92 @@ scale3d(${scale.x}, ${scale.y}, ${scale.z})
             </script>
     </DemoSubsection>
     <DemoSubsection id="preserve-3d" title="Preserve 3D">
+
+        <p>We can preserve 3d perspective into grandchildren elements on a container by using the <span class='text-accent'>transform-style: preserve-3d;</span>. Here we can see the lower left container does not preserve the 3d space into its children, while the upper right container does.</p>
+        <div class="flex flex-wrap flex-col gap-2 lg:flex-row">
+            <div class="w-full lg:w-5/12">
+            <CodeBlock>
+{`
+.parent {
+    transition: transform 0.4s ease;
+    transform-style: preserve-3d;
+    perspective: 600px;
+    transform: rotateX(0) rotateY(0) rotateZ(0);
+}
+.parent[data-toggle="true"] {
+    transform-style: preserve-3d;
+    transform: rotateX(70deg) rotateY(-10deg) rotateZ(50deg);
+    .child {
+        transform: translateZ(40px);
+    }
+
+    .child[data-3d="true"] {
+        transform-style: preserve-3d;
+    }
+
+    .grandchild {
+        transform-style: preserve-3d;
+        transform: translateZ(30px);
+    }
+}
+
+.child {
+    /* NOTE NO PRESERVE 3D TRANSFORM,
+    SO THE GRANDCHILDREN WILL NOT
+    RENDER WITH 3D EFFECTS */
+    transition: transform 0.4s ease;
+    transform: translateZ(0);
+}
+.grandchild {
+    transition: transform 0.4s ease;
+    transform: translateZ(0);
+}
+`}
+            </CodeBlock></div>
         <style>
             .parent {
                 transition: transform 0.4s ease;
                 transform-style: preserve-3d;
-                perspective: 0px;
+                perspective: 600px;
                 transform: rotateX(0) rotateY(0) rotateZ(0);
             }
-            .threeDParent {
+            .parent[data-toggle="true"] {
                 transform-style: preserve-3d;
-                perspective: 600px;
                 transform: rotateX(70deg) rotateY(-10deg) rotateZ(50deg);
                 .child {
                     transform: translateZ(40px);
                 }
 
+                .child[data-3d="true"] {
+                    transform-style: preserve-3d;
+                }
+
                 .grandchild {
-                    transform: translateZ(40px);
+                    transform-style: preserve-3d;
+                    transform: translateZ(30px);
                 }
             }
 
-            .flatParent {
-                
-            }
             .child {
+                /* NOTE NO PRESERVE 3D TRANSFORM, SO THE GRANDCHILDREN WILL NOT RENDER WITH 3D EFFECTS */
+                transition: transform 0.4s ease;
                 transform: translateZ(0);
             }
             .grandchild {
+                transition: transform 0.4s ease;
                 transform: translateZ(0);
             }
         </style>
-        <div class="w-8/12 transition-all duration-200" id="preserve-3d-example">
+        <div class="w-full lg:w-5/12 transition-all duration-200 mt-4" id="preserve-3d-example">
             <div class="parent w-full aspect-video border border-accent borer-solid bg-muted relative">
-                <div class="child bg-muted absolute right-2 top-2 border border-accent border-solid aspect-video w-5/12 transform-3d">
-                    <div class="grandchild bg-muted absolute w-6/12 border border-accent border-solid aspect-video right-4 top-4 ">
-
+                <div data-3d="true" class="child bg-muted absolute right-2 top-2 border border-accent border-solid aspect-video w-5/12">
+                    <div class="grandchild bg-muted absolute w-6/12 border border-accent border-solid aspect-video right-4 top-4 flex items-center justify-center">
+                        3d
                     </div>
                 </div>
                 <div class="child bg-muted absolute left-2 bottom-2 border border-accent border-solid aspect-video w-5/12">
-                    <div class="grandchild bg-muted absolute w-6/12 border border-accent border-solid aspect-video right-4 top-4 ">
-
+                    <div class="grandchild bg-muted absolute w-6/12 border border-accent border-solid aspect-video right-4 top-4 flex items-center justify-center">
+                        Not 3d
                     </div>
                 </div>
                 <div class="absolute right-2 bottom-2">
@@ -554,6 +601,8 @@ scale3d(${scale.x}, ${scale.y}, ${scale.z})
                 </div>
             </div>
         </div>
+        </div>
+        
         <script>
             const parentContainer = document.getElementById('preserve-3d-example');
             const toggle = parentContainer?.querySelector('#toggle') as HTMLButtonElement;
@@ -565,10 +614,10 @@ scale3d(${scale.x}, ${scale.y}, ${scale.z})
                 toggle.addEventListener('click', () => {
                     console.log('clicked', isToggled)
                     if (isToggled) {
-                        parent.classList.remove('threeDParent');
+                        parent.setAttribute('data-toggle', 'false')
                         isToggled = false;
                     } else {
-                        parent.classList.add('threeDParent');
+                        parent.setAttribute('data-toggle', 'true')
                         isToggled = true;
                     }
                 })

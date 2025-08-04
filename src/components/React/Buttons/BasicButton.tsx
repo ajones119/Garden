@@ -5,7 +5,7 @@ const BasicButton = ({className, children, ...rest}: PropsWithChildren<BasicButt
 
     return (
         <button
-            className={`px-4 py-2 rounded-md font-bold text-white transition-colors bg-muted hover:bg-accent hover:cursor-pointer ${className}`}
+            className={`px-4 py-2 rounded-md font-bold text-foreground transition-colors bg-muted hover:bg-accent hover:cursor-pointer ${className}`}
             {...rest}
         >
             {children}

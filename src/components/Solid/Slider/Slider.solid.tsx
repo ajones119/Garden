@@ -1,6 +1,5 @@
 /** @jsxImportSource solid-js */
 
-
 // src/components/Slider.solid.tsx
 import { createSignal, onCleanup } from "solid-js";
 
@@ -17,7 +16,6 @@ type SliderProps = {
 };
 
 export default function Slider(props: SliderProps) {
-
   return (
     <div class="flex flex-col gap-1 w-full max-w-sm text-[var(--color-foreground)] font-epic">
       {props.label && (
@@ -45,10 +43,7 @@ export default function Slider(props: SliderProps) {
           onInput={(e) => props.onChange(+e.currentTarget.value)}
           class="w-full h-2 bg-[var(--color-muted)] rounded-lg appearance-none cursor-pointer accent-[var(--color-primary)]"
         />
-        <output
-          for={props.id}
-          class="text-xs w-10 text-left text-nowrap"
-        >
+        <output for={props.id} class="text-xs w-10 text-left text-nowrap">
           {props.value + " " + (props.unit ?? "")}
         </output>
       </div>

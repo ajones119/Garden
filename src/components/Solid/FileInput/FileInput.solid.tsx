@@ -61,7 +61,9 @@ export default function FileDropzone(props: FileDropzoneProps) {
       onDrop={handleDrop}
       onClick={() => dropRef?.querySelector("input")?.click()}
     >
-      <p class="text-sm text-gray-600">Drag & drop an image here, or click to select</p>
+      <p class="text-sm text-gray-600">
+        Drag & drop an image here, or click to select
+      </p>
       <input
         type="file"
         accept={props.accept || "image/*"}

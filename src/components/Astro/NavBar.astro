@@ -1,6 +1,7 @@
 ---
 import ThemeToggle from "./Inputs/ThemeToggle.astro";
-
+import LOGO from "../../assets/logo.png"
+import Image from "astro/components/Image.astro";
 
 const {contentContainerId = ""} = Astro.props;
 ---
@@ -10,7 +11,14 @@ const {contentContainerId = ""} = Astro.props;
     class="fixed top-0 left-0 right-0 z-50 h-[48px] w-full bg-background transition-transform duration-300 ease-in-out"
 >
     <div class="mx-auto h-full flex items-center justify-between px-4">
-        <a href="/" class="text-foreground font-bold text-lg">Garden ICON TBD</a>
+        <a href="/" class="text-foreground font-bold text-lg">
+            <Image 
+                loading="eager" 
+                src={LOGO} 
+                alt={"Logo"} 
+                height={56}
+            />
+        </a>
         <ul class="space-x-4 hidden md:flex">
             <li><ThemeToggle /></li>
             <li><a href="/demos" class="text-foreground hover:text-gray-300">Demos</a></li>

@@ -18,16 +18,16 @@ let mainFill =
 
 let splashes = [];
 let drops = [];
-const buttonPositions = [];
+const surfacePositions = [];
 
 function updateElementPositions() {
-  buttonPositions.length = 0;
+  surfacePositions.length = 0;
   const canvasRect = canvas.getBoundingClientRect();
   const container = canvas.parentElement.parentElement;
 
   container.querySelectorAll(".surface").forEach((button) => {
     const rect = button.getBoundingClientRect();
-    buttonPositions.push({
+    surfacePositions.push({
       top: rect.top - canvasRect.top,
       left: rect.left - canvasRect.left,
       right: rect.right - canvasRect.left,
@@ -36,12 +36,22 @@ function updateElementPositions() {
       height: rect.height,
     });
   });
-}
+}container.querySelectorAll(".surface").forEach((button) => {
+    const rect = button.getBoundingClientRect();
+    surfacePositions.push({
+      top: rect.top - canvasRect.top,
+      left: rect.left - canvasRect.left,
+      right: rect.right - canvasRect.left,
+      bottom: rect.bottom - canvasRect.top,
+      width: rect.width,
+      height: rect.height,
+    });
+  });
 
 updateElementPositions(); // initial call
 
 function nodeCollideWithElement(x, y) {
-  return buttonPositions.some((pos) => {
+  return surfacePositions.some((pos) => {
     return x < pos.right && x > pos.left && y < pos.bottom && y > pos.top;
   });
 }
@@ -220,7 +230,7 @@ function animate(time = 0) {
     });
     splashes = splashes.filter((splash) => !splash.canRemove);
 
-    /*buttonPositions.forEach(pos => {
+    /*surfacePositions.forEach(pos => {
         ctx.fillStyle = "blue";
         ctx.fillRect(pos.left, pos.top, pos.width, pos.height);
       });*/

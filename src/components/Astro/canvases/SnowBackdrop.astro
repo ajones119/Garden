@@ -29,93 +29,89 @@ function calculateSurfaceMap() {
     let colX = col * pile.cellWidth + pile.cellWidth / 2;
     let minY = canvas.height;
 
-    for (const button of buttonPositions) {
-      if (colX >= button.left && colX <= button.right) {
-        minY = Math.min(minY, button.top); // top of the button
+    for (const surface of surfacePositions) {
+      if (colX >= surface.left && colX <= surface.right) {
+        minY = Math.min(minY, surface.top); // top of the surface
       }
     }
 
-    surfaceMap[col] = minY; // will be canvas.height if no button
+    surfaceMap[col] = minY; // will be canvas.height if no surface
   }
 }
 
   class SnowPile {
-        cellWidth;
-        // 0 = empty, 1 = snow 2 = blocker
-        piles = new Uint8Array(0);
-        colCount = 0;
-        rowCount = 0;
+    cellWidth;
+    // 0 = empty, 1 = snow 2 = blocker
+    piles = new Uint8Array(0);
+    colCount = 0;
+    rowCount = 0;
 
-        constructor(width, height) {
-            this.cellWidth = squareLength;
+    constructor(width, height) {
+        this.cellWidth = squareLength;
 
-            this.resize(width, height)
-        }
-
-
-        // get teh flat index from the col row
-        getIndex(col, row) {
-          return row * this.colCount + col;
-        }
-
-        getValue(col, row) {
-          if (col < 0 || col >= this.colCount || row < 0 || row >= this.rowCount) return undefined;
-          return this.piles[this.getIndex(col, row)];
-        }
-
-        setValue(col, row, value) {
-          if (
-            col < 0 || col >= this.colCount ||
-            row < 0 || row >= this.rowCount
-          ) return;
-
-          this.piles[this.getIndex(col, row)] = value;
-        }
-
-        isInBounds(col, row) {
-          return (
-            col >= 0 && col < this.colCount &&
-            row >= 0 && row < this.rowCount
-          );
-        }
-
-        //refactor this to not lose data on resize
-        resize(width, height) {
-          //this.piles = []
-          this.colCount = Math.ceil(canvas.width / this.cellWidth)
-          this.rowCount = Math.ceil(canvas.height / this.cellWidth)
-          // look into this optimization
-          this.piles = new Uint8Array(this.colCount * this.rowCount);
+        this.resize(width, height)
+    }
 
 
-          for (let i = 0; i < this.colCount; i++) {
-              for (let j = 0; j < this.rowCount; j++) {
-                  // Default to empty
-                  this.setValue(i, j, 0)
-              }
-          }
+    // get the flat index from the col row
+    getIndex(col, row) {
+      return row * this.colCount + col;
+    }
 
-          // Fill cells within button positions with blue (2)
-          for (let col = 0; col < this.colCount; col++) {
-              for (let row = 0; row < this.rowCount; row++) {
-                  // Calculate cell center
-                  const x = col * this.cellWidth + this.cellWidth / 2;
-                  const y = row * this.cellWidth + this.cellWidth / 2;
-                  // Check if inside any button
-                  for (const pos of buttonPositions) {
-                      if (
-                          x >= pos.left &&
-                          x <= pos.right &&
-                          y >= pos.top &&
-                          y <= pos.bottom
-                      ) {
-                          this.setValue(col, row, 2)
-                          break;
-                      }
-                  }
-              }
+    getValue(col, row) {
+      if (col < 0 || col >= this.colCount || row < 0 || row >= this.rowCount) return undefined;
+      return this.piles[this.getIndex(col, row)];
+    }
+
+    setValue(col, row, value) {
+      if (
+        col < 0 || col >= this.colCount ||
+        row < 0 || row >= this.rowCount
+      ) return;
+
+      this.piles[this.getIndex(col, row)] = value;
+    }
+
+    isInBounds(col, row) {
+      return (
+        col >= 0 && col < this.colCount &&
+        row >= 0 && row < this.rowCount
+      );
+    }
+
+    resize(width, height) {
+      this.colCount = Math.ceil(canvas.width / this.cellWidth)
+      this.rowCount = Math.ceil(canvas.height / this.cellWidth)
+      this.piles = new Uint8Array(this.colCount * this.rowCount);
+
+
+      for (let i = 0; i < this.colCount; i++) {
+          for (let j = 0; j < this.rowCount; j++) {
+              // Default to empty
+              this.setValue(i, j, 0)
           }
       }
+
+      for (let col = 0; col < this.colCount; col++) {
+          for (let row = 0; row < this.rowCount; row++) {
+              // Calculate cell center
+              const x = col * this.cellWidth + this.cellWidth / 2;
+              const y = row * this.cellWidth + this.cellWidth / 2;
+              // Check if inside any surface
+              for (const pos of surfacePositions) {
+                  if (
+                      x >= pos.left &&
+                      x <= pos.right &&
+                      y >= pos.top &&
+                      y <= pos.bottom
+                  ) {
+                      this.setValue(col, row, 2)
+                      break;
+                  }
+            }
+        }
+      }
+    }
 
     getCoords(x, y) {
         const xCol = Math.floor(x / this.cellWidth);
@@ -178,7 +174,7 @@ function calculateSurfaceMap() {
                         this.setValue(col, row + 1, 1)
                         this.setValue(col, row, 0)
                     } else if (this.getValue(col, row + 1) === 2) {
-                        // resting on button, do nothing
+                        // resting on surface, do nothing
                         continue;
                     } else {
                         // maybe spread
@@ -216,16 +212,14 @@ function calculateSurfaceMap() {
         if (!collectAtTheBottom) {
           this.clearRow(this.rowCount - 1)
         }
-
       }
 
-
     isRowFull(rowIndex) {
-    for (let i = 0; i < this.colCount; i++) {
-      if (this.getValue(i, rowIndex) !== 1) return false;
+      for (let i = 0; i < this.colCount; i++) {
+        if (this.getValue(i, rowIndex) !== 1) return false;
+      }
+      return true;
     }
-    return true;
-  }
 
     drawRow(rowIndex = 0) {
       ctx.fillStyle = "white"
@@ -237,11 +231,11 @@ function calculateSurfaceMap() {
       const colCount = this.colCount;
       // scan down row until empty cell is found, then draw starting from rowIndex to empty, if we reach the end cutoff and draw to the end, return the new colIndex
       while (
-  newIndex < colCount &&
-  this.getValue(newIndex, rowIndex) === type
-) {
-  newIndex++;
-}
+        newIndex < colCount &&
+        this.getValue(newIndex, rowIndex) === type
+      ) {
+        newIndex++;
+      }
 
       ctx.fillStyle = debug ? colIndex % 2 === 0 ? "green" : "red" : "white"; // alternate white/gray
       ctx.fillRect(
@@ -251,22 +245,16 @@ function calculateSurfaceMap() {
         this.cellWidth
       )
 
-
       return newIndex;
     }
-
-
-
     draw(ctx) {
-        const { piles, cellWidth } = this;
-        
         const rowCount = this.rowCount;
         const colCount = this.colCount;
         
         for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
           ctx.fillStyle = "white";
           //Check Row
-          if (false && this.isRowFull(rowIndex)) {
+          if (this.isRowFull(rowIndex)) {
             this.drawRow(rowIndex);
             continue;
           } else {
@@ -313,13 +301,13 @@ function calculateSurfaceMap() {
           this.y += Math.sin(this.angle) * this.velocity;
           this.x = this.baseX + Math.sin(this.y * this.frequency + this.phase) * this.amplitude;
 
-          const [col, row] = pile.getCoords(this.x, this.y);
+          const [col] = pile.getCoords(this.x, this.y);
 
           if (
               nodeCollideWithSnowPile(this.x, this.y) ||
               nodeCollideWithElement(this.x, this.y)
           ) {
-              const surfaceY = surfaceMap[col]; // top of button or canvas bottom
+              const surfaceY = surfaceMap[col]; // top of surface or canvas bottom
               const baseRow = pile.getCoords(this.x, surfaceY)[1];
 
               // Randomly choose left (-1), center (0), or right (+1)
@@ -338,14 +326,7 @@ function calculateSurfaceMap() {
 
       }
 
-          /**
-       * 
-       * @param ctx CanvasRendering2dContext
-       */
       draw(ctx) {
-      ctx.fillStyle = "white";
-      //ctx.shadowColor = "rgba(255, 255, 255, 0.9)";
-      //ctx.shadowBlur = 0
       ctx.beginPath();
       ctx.fillStyle = "white"
       ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
@@ -354,35 +335,38 @@ function calculateSurfaceMap() {
   }
     
 
-    const drops = [];
-    const buttonPositions = [];
-    const pile = new SnowPile(canvas.width, canvas.height, squareLength);
+  const drops = [];
+  const surfacePositions = [];
+  const pile = new SnowPile(canvas.width, canvas.height, squareLength);
 
-   function initializeCanvas() {
+  function initializeCanvas() {
   // existing code
-  buttonPositions.length = 0;
-  const canvasRect = canvas.getBoundingClientRect();
+    surfacePositions.length = 0;
+    const canvasRect = canvas.getBoundingClientRect();
+    const container = canvas.parentElement.parentElement;
 
-  document.querySelectorAll('.surface').forEach(button => {
-    const rect = button.getBoundingClientRect();
-    buttonPositions.push({
-      top: rect.top - canvasRect.top,
-      left: rect.left - canvasRect.left,
-      right: rect.right - canvasRect.left,
-      bottom: rect.bottom - canvasRect.top,
-      width: rect.width,
-      height: rect.height,
+    container.querySelectorAll(".surface").forEach((button) => {
+      const rect = button.getBoundingClientRect();
+      surfacePositions.push({
+        top: rect.top - canvasRect.top,
+        left: rect.left - canvasRect.left,
+        right: rect.right - canvasRect.left,
+        bottom: rect.bottom - canvasRect.top,
+        width: rect.width,
+        height: rect.height,
+      });
     });
-  });
 
-  calculateSurfaceMap();
-}
+    calculateSurfaceMap();
+  }
 
 function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    initializeCanvas(); // <-- get button positions first
-    pile.resize(canvas.width, canvas.height); // <-- now resize with correct button positions
+    const container = canvas.parentElement;
+    const rect = container.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    initializeCanvas(); // <-- get surface positions first
+    pile.resize(canvas.width, canvas.height); // <-- now resize with correct surface positions
 }
 
 resizeCanvas();
@@ -391,7 +375,7 @@ window.addEventListener('resize', resizeCanvas);
 initializeCanvas();
 
 function nodeCollideWithElement (x, y) {
-  return buttonPositions.some(pos => {
+  return surfacePositions.some(pos => {
     return x < pos.right && x > pos.left && y < pos.bottom && y > pos.top
   })
 }
@@ -460,7 +444,7 @@ function drawFPS(ctx, width, height) {
   }
 
 
-    drawFPS(ctx, canvas.width, canvas.height);
+    //drawFPS(ctx, canvas.width, canvas.height);
     requestAnimationFrame(animate)
   }
 

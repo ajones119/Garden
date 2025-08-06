@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import NavBar from "../components/Astro/NavBar.astro"
+import HeapSnapshot from "../components/Astro/HeapSnapshot.astro";
 
 const {hasNavbar} = Astro.props
 ---
@@ -39,7 +40,9 @@ const {hasNavbar} = Astro.props
 	</head>
 	<body class={`text-foreground bg-background`}>
 		{hasNavbar && <NavBar />}
-		<div id="pageContent" class={`${hasNavbar ? "mt-[48px]" : ""} transition-all duration-200`}><slot /></div>
+		<div id="pageContent" class={`${hasNavbar ? "mt-[48px]" : ""} transition-all duration-200`}>
+			<slot />
+		</div>
 	</body>
 </html>
 

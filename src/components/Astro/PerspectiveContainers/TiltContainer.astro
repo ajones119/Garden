@@ -1,0 +1,33 @@
+---
+const {className, sensitivity = 15, scale = 1.05} = Astro.props
+---
+
+
+<div class="tilt-wrapper" data-sensitivity={sensitivity} data-scale={scale}>
+  <div class={`tilt-inner ${className}`}>
+    <slot />
+  </div>
+</div>
+<style>
+  .tilt-wrapper {
+    display: inline-block;
+    perspective: 1000px;
+  }
+
+  .tilt-inner {
+    transition: transform 0.1s ease;
+    transform-style: preserve-3d;
+    will-change: transform;
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<script>
+  import { initTilt } from '../../../utils/vanilla/tilt';
+
+  window.addEventListener('DOMContentLoaded', () => {
+    console.log("init")
+    initTilt(); // Safe — uses WeakSet guard
+  });
+</script>

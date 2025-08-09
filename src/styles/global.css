@@ -53,6 +53,11 @@
   }
 }
 
+@utility preserve-3d{
+  transform-style: preserve-3d;
+}
+
+
 @theme {
   --color-background: #f3f4f6; /* neutral light gray */
   --color-foreground: #111827; /* near-black text */

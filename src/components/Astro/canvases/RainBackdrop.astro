@@ -25,7 +25,7 @@ function updateElementPositions() {
   const canvasRect = canvas.getBoundingClientRect();
   const container = canvas.parentElement.parentElement;
 
-  container.querySelectorAll(".surface").forEach((button) => {
+  container?.querySelectorAll(".surface").forEach((button) => {
     const rect = button.getBoundingClientRect();
     surfacePositions.push({
       top: rect.top - canvasRect.top,
@@ -36,17 +36,7 @@ function updateElementPositions() {
       height: rect.height,
     });
   });
-}container.querySelectorAll(".surface").forEach((button) => {
-    const rect = button.getBoundingClientRect();
-    surfacePositions.push({
-      top: rect.top - canvasRect.top,
-      left: rect.left - canvasRect.left,
-      right: rect.right - canvasRect.left,
-      bottom: rect.bottom - canvasRect.top,
-      width: rect.width,
-      height: rect.height,
-    });
-  });
+}
 
 updateElementPositions(); // initial call
 

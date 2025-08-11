@@ -3,12 +3,8 @@ import Layout from "../../layouts/Layout.astro";
 
 import BaseDemoLayout from "../../layouts/demo/BaseDemoLayout.astro";
 import type { BaseDemoLayoutProps } from "./types";
-import CodeBlock from "../../components/Astro/CodeBlock.astro";
 import DemoSubsection from "../../layouts/demo/DemoSubsection.astro";
-import BasicButton from "../../components/Astro/Buttons/BasicButton.astro";
 import RadioButtons from "../../components/Astro/Inputs/RadioButtons/RadioButtons.astro";
-import Slider from "../../components/Astro/Inputs/Slider/Slider.astro"
-import LOGO from "../../assets/logo.png"
 
 const base: BaseDemoLayoutProps = {
 		dateAdded: "07/25/2025",
@@ -17,10 +13,10 @@ const base: BaseDemoLayoutProps = {
 		sections: [
 			{ id: "intro", title: "Introduction" },
             { id: "float", title: "Float" },
+            { id: "shape-outside", title: "Shape Outside" },
 			
 		]
 	};
-
 
     const options = [
         {
@@ -70,6 +66,7 @@ const base: BaseDemoLayoutProps = {
         { value: 'ellipse(50% 35% at 50% 50%)', label: 'Ellipse' },
         { value: 'inset(10% 10% 10% 10%)', label: 'Inset (rounded rect)' },
         { value: 'polygon(0% 0%, 100% 0%, 0% 75%, 50% 100%, 0% 75%)', label: 'Polygon (triangle)' },
+        { value: 'url("/logo_tiny.png")', label: "image" }
     ];
 
 ---
@@ -146,8 +143,8 @@ const base: BaseDemoLayoutProps = {
   <div class="mt-4 max-w-6/12 mx-auto text-center">
     <div
         id="shape-outside-demo"
-        style={`float: left; background-image: url(${LOGO.src}); background-size: cover; background-position: center;`}
-        class="border border-border border-solid w-20 aspect-square"
+        style={`float: left; background-image: url('/logo_tiny.png'); background-size: cover; background-position: center;`}
+        class="border border-border border-solid w-20 aspect-square "
     ></div>
     <p class="text-justify">
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod lacus nec mauris fringilla, ac rhoncus ipsum pulvinar. Praesent rhoncus purus at nulla cursus, vel finibus nulla tincidunt. Mauris ut orci aliquet, dignissim purus sed, pulvinar ipsum. Nullam laoreet eu urna ut cursus.
@@ -165,8 +162,12 @@ const base: BaseDemoLayoutProps = {
             const target = e?.target as HTMLInputElement;
             const value = target?.value;
 
-          demo.style.shapeOutside = value;
+
+            demo.style.shapeOutside = value;
+            demo.style.clipPath = value;
           //demo.style.webkitShapeOutside = value;
+
+          
 
           // Optional: Adjust border radius based on shape type for visual appeal
           if(value.startsWith('circle') || value.startsWith('ellipse')) {

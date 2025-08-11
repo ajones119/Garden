@@ -1,29 +1,35 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import FabricSvgImage from "../../assets/demoImages/svgFabric/sectionimage.png"
+import FabricSvgImage2 from "../../assets/demoImages/svgFabric/sectionimage.png"
+import FabricSvgImage from "../../assets/demoImages/mainCardImages/canvas-svg.png"
+import Chest from "../../assets/demoImages/mainCardImages/chest.png"
+import RainImage from "../../assets/demoImages/mainCardImages/rain.png"
+import Squares from "../../assets/demoImages/mainCardImages/squares.png"
+import FloatingImage from "../../assets/demoImages/mainCardImages/float-image.png"
+import SnowImage from "../../assets/demoImages/mainCardImages/snow.png"
+
 import Image from "astro/components/Image.astro";
 import TiltContainer from "../../components/Astro/PerspectiveContainers/TiltContainer.astro";
 
 const Pages: {href: string, title: string, description: string, imageUrl: ImageMetadata, createdAt: Date, updatedAt?: Date}[] = [
 	{ href: "/demos/FabricSvg", title: "Fabric SVG Filter Demo", description: "A demo of applying a fabric texture to SVG elements using filters.", imageUrl: FabricSvgImage, createdAt: new Date("07/15/2025") },
-	{ href: "/demos/RainfallCanvas", title: "Rainfall Canvas", description: "Making Canvases for rainy days", imageUrl: FabricSvgImage, createdAt: new Date("07/18/2025") },
-	{ href: "/demos/QuickGSAPUtils", title: "Quick Gsap Grab bag", description: "small preset code functions for basic animations", imageUrl: FabricSvgImage, createdAt: new Date("07/22/2025") },
-	{ href: "/demos/3dcss", title: "3d Effect in CSS", description: "How can css transforms move your elements into the 3rd dimension", imageUrl: FabricSvgImage, createdAt: new Date("08/02/2025") },
-	{ href: "/demos/SnowfallCanvas", title: "Snowfall Canvas", description: "How can css transforms move your elements into the 3rd dimension", imageUrl: FabricSvgImage, createdAt: new Date("08/02/2025") },
-	
+	{ href: "/demos/RainfallCanvas", title: "Rainfall Canvas", description: "Making Canvases for rainy days", imageUrl: RainImage, createdAt: new Date("07/18/2025") },
+	{ href: "/demos/QuickGSAPUtils", title: "Quick Gsap Grab bag", description: "Small preset code functions for basic animations", imageUrl: Chest, createdAt: new Date("07/22/2025") },
+	{ href: "/demos/3dcss", title: "3d Effect in CSS", description: "How can css transforms move your elements into the 3rd dimension", imageUrl: Squares, createdAt: new Date("08/02/2025") },
+	{ href: "/demos/SnowfallCanvas", title: "Snowfall Canvas", description: "Snowy ui for winter", imageUrl: SnowImage, createdAt: new Date("08/02/2025") },
+	{ href: "/demos/FloatingImage", title: "Floating Image", description: "Inline images with text wrapping", imageUrl: FloatingImage, createdAt: new Date("08/06/2025") },
+
 ]
 ---
 
 <Layout hasNavbar>	
-    <div class="flex justify-center flex-wrap items-start gap-8 mx-auto">
-		
-		
+    <div class="grid grid-cols-1 w-fit sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mx-auto pt-10 px-4">
 		{Pages.map((page) => {
 			return (
-				<TiltContainer className="group cursor-pointer h-80 shadow-sm hover:shadow-lg transition-all bg-mute hover:border-accent rounded-lg border border-border border-solid w-full sm:w-80 aspect-[3/4] duration-300 max-w-xs ">
+				<TiltContainer className="group cursor-pointer h-80 shadow-sm hover:shadow-lg transition-all  hover:border-none rounded-lg border border-border border-solid w-full sm:w-80 duration-300 max-w-xs ">
 					<a href={page.href} class="block transform-3d h-full rgb after:rounded-lg rounded-lg bg-background hover:bg-transparent transition-colors duration-200">
-						<div class="flex flex-col h-full transform-3d">
-							<div class="h-48 w-full overflow-hidden rounded-t-lg cardImage">
+						<div class="transform-3d">
+							<div class="h-48 w-full overflow-hidden rounded-t-lg cardImage transform-3d group-hover:translate-z-[75px]">
 								<Image 
 								loading="eager" 
 								src={page.imageUrl} 
@@ -32,12 +38,12 @@ const Pages: {href: string, title: string, description: string, imageUrl: ImageM
 								/>
 							</div>
 							<div class="p-2 flex flex-col justify-between flex-1 transform-3d translate-z-[20px]">
-								<h3 class="text-lg font-semibold transition-transform duration-300 transform-3d group-hover:translate-z-[20px] ">
+								<h3 class="text-lg font-semibold transition-transform duration-300 transform-3d group-hover:translate-z-[100px] ">
 								{page.title}
 								</h3>
-								<p class="text-sm text-muted-foreground">{page.description}</p>
-								<p class="text-sm text-muted-foreground">
-								<b>Planted:</b> {page.createdAt.getMonth() + 1}/{page.createdAt.getDate()}/{page.createdAt.getFullYear()}
+								<p class="text-md text-muted-foreground transition-transform group-hover:translate-z-[50px] group-hover:text-foreground">{page.description}</p>
+								<p class="text-xs text-foreground transition-transform group-hover:translate-z-[50px]">
+									<b class="text-xs text-foreground group-hover:translate-z-[50px]">Planted:</b> {page.createdAt.getMonth() + 1}/{page.createdAt.getDate()}/{page.createdAt.getFullYear()}
 								</p>
 							</div>
 						</div>
@@ -86,6 +92,4 @@ const Pages: {href: string, title: string, description: string, imageUrl: ImageM
 <script>
 	//initialize gsap
 	import gsap from "gsap";
-	
-
 </script>

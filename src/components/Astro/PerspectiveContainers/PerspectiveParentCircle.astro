@@ -1,0 +1,12 @@
+---
+
+const {id, perspective = 0} = Astro.props;
+---
+
+<div id={id} class="perspective-section size-full aspect-square border-accent border-solid border-2 rounded-full relative" style={`perspective: ${perspective}px;`}><slot /></div>
+<style>
+    .perspective-section {
+        transform-style: preserve-3d;
+        perspective-origin: 50% 50%;
+    }
+</style>

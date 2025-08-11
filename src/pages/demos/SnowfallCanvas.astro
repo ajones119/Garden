@@ -1,0 +1,434 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import BaseDemoLayout from "../../layouts/demo/BaseDemoLayout.astro";
+import DemoSubsection from "../../layouts/demo/DemoSubsection.astro";
+import CodeBlock from "../../components/Astro/CodeBlock.astro";
+import SnowfallCanvasBackdrop from "../../components/Astro/canvases/SnowBackdrop.astro"; // new!
+import type { BaseDemoLayoutProps } from "./types";
+
+const base: BaseDemoLayoutProps = {
+  dateAdded: "08/05/2025",
+  title: "Snowfall Canvas",
+  topics: ["2d Canvas", "Weather Effects", "Canvas Animation", "Element Interaction"],
+  sections: [
+    { id: "intro", title: "Introduction" },
+    { id: "approach", title: "Approach the problem" },
+    { id: "snowflake", title: "Snowflake" },
+    { id: "snow-pile", title: "Snow pile" },
+    { id: "collisions", title: "Element & Surface Collision" },
+    { id: "animation-loop", title: "Animation Loop" },
+    { id: "final-code", title: "Final Code" },
+  ]
+};
+---
+
+<Layout hasNavbar>
+  <BaseDemoLayout {...base}>
+    <div class="relative min-h-[100dvh] overflow-hidden">
+      <div class="absolute inset-0 z-0">
+        <SnowfallCanvasBackdrop />
+      </div>
+
+      <div class="relative z-10 flex flex-col items-center justify-center min-h-[100dvh] gap-6 px-4">
+        <div class="p-4 border border-border rounded-md surface text-foreground max-w-md hover:bg-muted transition-all">
+          <p class="text bg-gradient-to-bl from-blue-100 via-cyan-400 to-white animate-gradient-move text-transparent bg-clip-text">Let it snow.</p>
+        </div>
+        <div class="p-4 border border-border rounded-md surface text-foreground max-w-md hover:bg-muted transition-all">
+          <p class="text-2xl font-bold bg-gradient-to-tr from-blue-100 via-cyan-400 to-white animate-gradient-move text-transparent bg-clip-text">Embrace the cold</p>
+        </div>
+      </div>
+    </div>
+
+    <DemoSubsection id="intro" title="Introduction">
+      <p>This canvas demo shows dynamic snowflakes that pile up at the bottom of the screen or on real HTML elements. It's built entirely with low-level <code>&lt;canvas&gt;</code> APIs, and features efficient grid-based state tracking, natural motion, and interaction with DOM surfaces.</p>
+    </DemoSubsection>
+
+    <DemoSubsection id="approach" title="Approach the problem">
+      <p>Instead of having snowflakes disappear when they fall off screen, we wanted them to accumulate naturally — either at the base of the canvas or on top of UI elements.</p>
+      <br />
+      <p>This requires:
+        <ul class="list-disc list-inside">
+          <li>Simulating physical pile-up behavior</li>
+          <li>Tracking occupied canvas grid cells</li>
+          <li>Detecting collisions with DOM elements using <code>getBoundingClientRect()</code></li>
+        </ul>
+      </p>
+      <p>We’ll walk through how to initialize the canvas, build the grid system, update snowflakes, and maintain frame-rate stability.</p>
+    </DemoSubsection>
+
+    <DemoSubsection id="snowflake" title="Snowflake">
+      <ul class="list-disc list-inside">
+        <li><strong>Snowflake</strong>: A falling particle with wave motion</li>
+        <li>The <strong>Snowflake</strong> should detect when it collides with a screen element OR a snow pile and "land".</li>
+
+        <li>The <strong>Snowflake</strong> should help snow spread by randomly moving 1 column left or right on contact.</li>
+      </ul>
+
+<CodeBlock>{`
+  class Snowflake {
+      x = 0;
+      y = 0;
+      angle = Math.PI / 2 + Math.PI / 12
+      velocity = 4;
+      radius = 1;
+      hit = false;
+      amplitude = Math.random() * 20 + 10; // wave width
+      frequency = Math.random() * 0.02 + 0.01; // wave frequency
+      phase = Math.random() * Math.PI * 2; // random phase offset
+      baseX = 0; // starting x position
+
+      constructor(x, y, angle = Math.PI / 2 + Math.PI / 12) {
+          this.x = x;
+          this.y = y;
+          this.angle = angle;
+          this.baseX = x;
+      }
+
+      reset() {
+          this.y = -10;
+          this.x = Math.random() * canvas.width;
+          this.hit = true;
+      }
+
+      update() {
+          this.y += Math.sin(this.angle) * this.velocity;
+          this.x = this.baseX + Math.sin(this.y * this.frequency + this.phase) * this.amplitude;
+
+          const [col] = pile.getCoords(this.x, this.y);
+
+          if (
+              nodeCollideWithSnowPile(this.x, this.y) ||
+              nodeCollideWithElement(this.x, this.y)
+          ) {
+              const surfaceY = surfaceMap[col]; // top of surface or canvas bottom
+              const baseRow = pile.getCoords(this.x, surfaceY)[1];
+
+              // Randomly choose left (-1), center (0), or right (+1)
+              let offset = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+              let targetCol = Math.max(0, Math.min(col + offset, pile.piles.length - 1));
+
+              pile.add( targetCol, baseRow);
+              this.reset();
+          } else if (this.y > canvas.height) {
+              const baseRow = pile.getCoords(this.x, canvas.height)[1];
+              pile.add( col, baseRow);
+              this.reset();
+          } else {
+              this.hit = false;
+          }
+
+      }
+
+      draw(ctx) {
+      ctx.beginPath();
+      ctx.fillStyle = "white"
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fill();
+      }
+  }`}</CodeBlock>
+    </DemoSubsection>
+    <DemoSubsection id="snow-pile" title="Snow Pile">
+      <ul class="list-disc list-inside">
+        <li><strong>Snow Pile</strong>: An array of small columns of snow. The screen is populated on initialization with an array of snow columns.</li>
+        <li>The grid uses a <code>Uint8Array</code> for performance, and tracks <code>0</code> (empty), <code>1</code> (snow), or <code>2</code> (obstacle).</li>
+        <li>It should combat the tendency for the columns to be tall and narrow by looking at its neighbors and randomly 'spreading' by knocking the top flake off and to the left or right.</li>
+        <li>The column should animate snow cells falling if there is en empty cell under it.</li>
+
+    </ul>
+
+<CodeBlock>{`
+class SnowPile {
+    cellWidth;
+    // 0 = empty, 1 = snow 2 = blocker
+    piles = new Uint8Array(0);
+    colCount = 0;
+    rowCount = 0;
+
+    constructor(width, height) {
+        this.cellWidth = squareLength;
+
+        this.resize(width, height)
+    }
+
+
+    // get the flat index from the col row
+    getIndex(col, row) {
+        return row * this.colCount + col;
+    }
+
+    getValue(col, row) {
+        if (col < 0 || col >= this.colCount || row < 0 || row >= this.rowCount) return undefined;
+        return this.piles[this.getIndex(col, row)];
+    }
+
+    setValue(col, row, value) {
+        if (
+        col < 0 || col >= this.colCount ||
+        row < 0 || row >= this.rowCount
+        ) return;
+
+        this.piles[this.getIndex(col, row)] = value;
+    }
+
+    isInBounds(col, row) {
+        return (
+        col >= 0 && col < this.colCount &&
+        row >= 0 && row < this.rowCount
+        );
+    }
+
+    resize(width, height) {
+        this.colCount = Math.ceil(canvas.width / this.cellWidth)
+        this.rowCount = Math.ceil(canvas.height / this.cellWidth)
+        this.piles = new Uint8Array(this.colCount * this.rowCount);
+
+
+        for (let i = 0; i < this.colCount; i++) {
+            for (let j = 0; j < this.rowCount; j++) {
+                // Default to empty
+                this.setValue(i, j, 0)
+            }
+        }
+
+        for (let col = 0; col < this.colCount; col++) {
+            for (let row = 0; row < this.rowCount; row++) {
+                // Calculate cell center
+                const x = col * this.cellWidth + this.cellWidth / 2;
+                const y = row * this.cellWidth + this.cellWidth / 2;
+                // Check if inside any surface
+                for (const pos of surfacePositions) {
+                    if (
+                        x >= pos.left &&
+                        x <= pos.right &&
+                        y >= pos.top &&
+                        y <= pos.bottom
+                    ) {
+                        this.setValue(col, row, 2)
+                        break;
+                    }
+            }
+        }
+        }
+    }
+
+    getCoords(x, y) {
+        const xCol = Math.floor(x / this.cellWidth);
+        const yRow = Math.floor(y / this.cellWidth);
+
+        // Clamp to valid grid indices
+        const col = Math.max(0, Math.min(xCol, this.colCount - 1));
+        const row = Math.max(0, Math.min(yRow, this.rowCount - 1));
+
+        return [col, row];
+    }
+
+    add(col, baseRow) {
+        const rowCount = this.rowCount;
+
+        if (!collectAtTheBottom && baseRow === rowCount - 1) {
+            return;
+        }
+
+        let row = Math.min(baseRow, rowCount - 1);
+
+        while (row >= 0) {
+            if (this.getValue(col, row) === 0) {
+                this.setValue(col, row, 1);
+                return;
+            }
+            row--;
+        }
+
+        // If it gets here, column is full — do nothing or reset if you want overflow behavior
+    }
+
+    isCellFull(col, row){
+        return this.getValue(col, row) && !this.getValue(col, row-1);
+    }
+
+    clearRow(rowIndex) {
+        for (let col = 0; col < this.colCount; col++) {
+        this.setValue(col, rowIndex, 0);
+        }
+    }
+
+
+    update() {
+        const colCount = this.colCount;
+        const rowCount = this.rowCount;
+
+        // From bottom-2 upward
+        for (let row = rowCount - 2; row >= 0; row--) {
+            // Skip if this row is full
+            if (this.isRowFull(row)) continue;
+
+            for (let col = 0; col < colCount; col++) {
+                const cell = this.getValue(col, row);
+
+                if (cell === 1) {
+                    // Check the cell below
+                    if (this.getValue(col, row + 1) === 0) {
+                        
+                        this.setValue(col, row + 1, 1)
+                        this.setValue(col, row, 0)
+                    } else if (this.getValue(col, row + 1) === 2) {
+                        // resting on surface, do nothing
+                        continue;
+                    } else {
+                        // maybe spread
+                        let columnSnowCount = 0;
+                        for (let r = 0; r < rowCount; r++) {
+                            if (this.getValue(col, r) === 1) columnSnowCount++;
+                        }
+                        const willSpread = Math.random() < chanceToSpread * columnSnowCount;
+
+                        if (willSpread && columnSnowCount < rowCount - 3) {
+                            const directions = [];
+
+                            const canMoveLeft = col > 0 && this.getValue(col - 1, row) === 0;
+                            const canMoveRight = col < colCount - 1 && this.getValue(col + 1, row) === 0;
+
+                            if (canMoveLeft) directions.push(-1);
+                            if (canMoveRight) directions.push(1);
+
+                            if (directions.length > 0) {
+                            const dir = directions[Math.floor(Math.random() * directions.length)];
+                            this.setValue(col + dir, row, 1)
+                            this.setValue(col, row, 0)
+                            }
+                        } else {
+                            const willDecay = Math.random() < chanceToDecay;
+                            if (willDecay) {
+                            this.setValue(col, row, 0)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!collectAtTheBottom) {
+            this.clearRow(this.rowCount - 1)
+        }
+        }
+        
+    isRowFull(rowIndex) {
+        for (let i = 0; i < this.colCount; i++) {
+        if (this.getValue(i, rowIndex) !== 1) return false;
+        }
+        return true;
+    }
+
+    drawRow(rowIndex = 0) {
+        ctx.fillStyle = "white"
+        ctx.fillRect(0, rowIndex * this.cellWidth, this.colCount * this.cellWidth, this.cellWidth)
+    }
+
+    drawChunk(rowIndex, colIndex, type = 1,ctx) {
+        let newIndex = colIndex;
+        const colCount = this.colCount;
+        // scan down row until empty cell is found, then draw starting from rowIndex to empty, if we reach the end cutoff and draw to the end, return the new colIndex
+        while (
+        newIndex < colCount &&
+        this.getValue(newIndex, rowIndex) === type
+        ) {
+        newIndex++;
+        }
+
+        ctx.fillStyle = debug ? colIndex % 2 === 0 ? "green" : "red" : "white"; // alternate white/gray
+        ctx.fillRect(
+        colIndex * this.cellWidth,
+        rowIndex * this.cellWidth,
+        (newIndex-colIndex) * this.cellWidth,
+        this.cellWidth
+        )
+
+        return newIndex;
+    }
+
+    draw(ctx) {
+        const rowCount = this.rowCount;
+        const colCount = this.colCount;
+        
+        for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+            ctx.fillStyle = "white";
+            //Check Row
+            if (this.isRowFull(rowIndex)) {
+            this.drawRow(rowIndex);
+            continue;
+            } else {
+            for (let colIndex = 0; colIndex < colCount; colIndex++) {
+                if (this.getValue(colIndex, rowIndex) === 1) {
+                ctx.fillStyle = "white";
+                colIndex = this.drawChunk(rowIndex, colIndex, 1, ctx) - 1
+                } else if (debug === true && this.getValue(colIndex, rowIndex) === 2) {
+                ctx.fillStyle = "blue";
+                colIndex = this.drawChunk(rowIndex, colIndex, 2, ctx) - 1
+                }
+            }
+            }
+        }
+    }
+}`}</CodeBlock>
+    </DemoSubsection>
+
+    <DemoSubsection id="collisions" title="Element & Surface Collision">
+      <p>Snowflakes pile up either at the bottom of the canvas or on HTML elements (like buttons or cards) marked with <code>.surface</code>.</p>
+      <p>To detect them, we update a <code>surfacePositions</code> array using <code>getBoundingClientRect()</code>:</p>
+<CodeBlock>
+{`
+function updateElementPositions() {
+  const canvasRect = canvas.getBoundingClientRect();
+  surfacePositions.length = 0;
+
+  document.querySelectorAll('.surface').forEach(surface => {
+    const rect = surface.getBoundingClientRect();
+    surfacePositions.push({
+      top: rect.top - canvasRect.top,
+      left: rect.left - canvasRect.left,
+      right: rect.right - canvasRect.left,
+      bottom: rect.bottom - canvasRect.top,
+    });
+  });
+
+  calculateSurfaceMap();
+}
+`}
+</CodeBlock>
+      <p>These are compared against falling snowflake positions every frame. When a collision is detected, the flake is added to the <code>SnowPile</code> grid.</p>
+    </DemoSubsection>
+
+    <DemoSubsection id="animation-loop" title="Animation Loop">
+      <p>The snow animation uses a frame-throttled loop to balance visual smoothness with CPU efficiency.</p>
+<CodeBlock>{`
+let lastFrameTime = 0;
+const frameDelay = 1000 / 45;
+
+function animate(time = 0) {
+  const delta = time - lastFrameTime;
+  if (delta >= frameDelay) {
+    lastFrameTime = time;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pile.update();
+    pile.draw(ctx);
+    snowflakes.forEach(flake => {
+      flake.update();
+      flake.draw(ctx);
+    });
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+`}</CodeBlock>
+    </DemoSubsection>
+    <DemoSubsection id="final-code" title="Final Code">
+      <p class="codepen" data-height="600" data-default-tab="html,result" data-slug-hash="raOmgRR" data-pen-title="Snow Canvas" data-user="Aramis-Jones" style="height: 300px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;">
+  <span>See the Pen <a href="https://codepen.io/Aramis-Jones/pen/raOmgRR">
+  Snow Canvas</a> by Aramis Jones (<a href="https://codepen.io/Aramis-Jones">@Aramis-Jones</a>)
+  on <a href="https://codepen.io">CodePen</a>.</span>
+</p>
+<script async src="https://public.codepenassets.com/embed/index.js"></script>
+<div class="h-10" />
+    </DemoSubsection>
+  </BaseDemoLayout>
+</Layout>

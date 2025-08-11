@@ -1,0 +1,454 @@
+<canvas id="snow-canvas" class="w-full h-full "/>
+<script type="module">
+  const canvas = document.getElementById("snow-canvas")
+
+  //next ideas
+  // 1. moveable ui?
+
+  const ctx = canvas.getContext('2d');
+  const numberOfFlakes = 500;
+  const squareLength = 2;
+  const surfaceMap = [];
+  const collectAtTheBottom = false;
+  const chanceToSpread = 0.003;
+  const chanceToDecay = 0.0001;
+  const targetFPS = 45;
+  let fpsLow = 300;
+
+  const debug = false;
+
+  if (!ctx) {
+    console.log("no context")
+  }
+
+function calculateSurfaceMap() {
+  surfaceMap.length = 0;
+  const colCount = Math.ceil(canvas.width / pile.cellWidth);
+
+  for (let col = 0; col < colCount; col++) {
+    let colX = col * pile.cellWidth + pile.cellWidth / 2;
+    let minY = canvas.height;
+
+    for (const surface of surfacePositions) {
+      if (colX >= surface.left && colX <= surface.right) {
+        minY = Math.min(minY, surface.top); // top of the surface
+      }
+    }
+
+    surfaceMap[col] = minY; // will be canvas.height if no surface
+  }
+}
+
+  class SnowPile {
+    cellWidth;
+    // 0 = empty, 1 = snow 2 = blocker
+    piles = new Uint8Array(0);
+    colCount = 0;
+    rowCount = 0;
+
+    constructor(width, height) {
+        this.cellWidth = squareLength;
+
+        this.resize(width, height)
+    }
+
+
+    // get the flat index from the col row
+    getIndex(col, row) {
+      return row * this.colCount + col;
+    }
+
+    getValue(col, row) {
+      if (col < 0 || col >= this.colCount || row < 0 || row >= this.rowCount) return undefined;
+      return this.piles[this.getIndex(col, row)];
+    }
+
+    setValue(col, row, value) {
+      if (
+        col < 0 || col >= this.colCount ||
+        row < 0 || row >= this.rowCount
+      ) return;
+
+      this.piles[this.getIndex(col, row)] = value;
+    }
+
+    isInBounds(col, row) {
+      return (
+        col >= 0 && col < this.colCount &&
+        row >= 0 && row < this.rowCount
+      );
+    }
+
+    resize(width, height) {
+      this.colCount = Math.ceil(canvas.width / this.cellWidth)
+      this.rowCount = Math.ceil(canvas.height / this.cellWidth)
+      this.piles = new Uint8Array(this.colCount * this.rowCount);
+
+
+      for (let i = 0; i < this.colCount; i++) {
+          for (let j = 0; j < this.rowCount; j++) {
+              // Default to empty
+              this.setValue(i, j, 0)
+          }
+      }
+
+      for (let col = 0; col < this.colCount; col++) {
+          for (let row = 0; row < this.rowCount; row++) {
+              // Calculate cell center
+              const x = col * this.cellWidth + this.cellWidth / 2;
+              const y = row * this.cellWidth + this.cellWidth / 2;
+              // Check if inside any surface
+              for (const pos of surfacePositions) {
+                  if (
+                      x >= pos.left &&
+                      x <= pos.right &&
+                      y >= pos.top &&
+                      y <= pos.bottom
+                  ) {
+                      this.setValue(col, row, 2)
+                      break;
+                  }
+            }
+        }
+      }
+    }
+
+    getCoords(x, y) {
+        const xCol = Math.floor(x / this.cellWidth);
+        const yRow = Math.floor(y / this.cellWidth);
+
+        // Clamp to valid grid indices
+        const col = Math.max(0, Math.min(xCol, this.colCount - 1));
+        const row = Math.max(0, Math.min(yRow, this.rowCount - 1));
+
+        return [col, row];
+    }
+
+      add(col, baseRow) {
+        const rowCount = this.rowCount;
+
+        if (!collectAtTheBottom && baseRow === rowCount - 1) {
+          return;
+        }
+
+        let row = Math.min(baseRow, rowCount - 1);
+
+        while (row >= 0) {
+            if (this.getValue(col, row) === 0) {
+                this.setValue(col, row, 1);
+                return;
+            }
+            row--;
+        }
+
+          // If it gets here, column is full — do nothing or reset if you want overflow behavior
+      }
+
+    isCellFull(col, row){
+        return this.getValue(col, row) && !this.getValue(col, row-1);
+    }
+
+    clearRow(rowIndex) {
+      for (let col = 0; col < this.colCount; col++) {
+        this.setValue(col, rowIndex, 0);
+      }
+    }
+
+
+      update() {
+        const colCount = this.colCount;
+        const rowCount = this.rowCount;
+
+        // From bottom-2 upward
+        for (let row = rowCount - 2; row >= 0; row--) {
+            // Skip if this row is full
+          if (this.isRowFull(row)) continue;
+
+            for (let col = 0; col < colCount; col++) {
+                const cell = this.getValue(col, row);
+
+                if (cell === 1) {
+                    // Check the cell below
+                    if (this.getValue(col, row + 1) === 0) {
+                      
+                        this.setValue(col, row + 1, 1)
+                        this.setValue(col, row, 0)
+                    } else if (this.getValue(col, row + 1) === 2) {
+                        // resting on surface, do nothing
+                        continue;
+                    } else {
+                        // maybe spread
+                        let columnSnowCount = 0;
+                        for (let r = 0; r < rowCount; r++) {
+                          if (this.getValue(col, r) === 1) columnSnowCount++;
+                        }
+                        const willSpread = Math.random() < chanceToSpread * columnSnowCount;
+
+                        if (willSpread && columnSnowCount < rowCount - 3) {
+                          const directions = [];
+
+                          const canMoveLeft = col > 0 && this.getValue(col - 1, row) === 0;
+                          const canMoveRight = col < colCount - 1 && this.getValue(col + 1, row) === 0;
+
+                          if (canMoveLeft) directions.push(-1);
+                          if (canMoveRight) directions.push(1);
+
+                          if (directions.length > 0) {
+                            const dir = directions[Math.floor(Math.random() * directions.length)];
+                            this.setValue(col + dir, row, 1)
+                            this.setValue(col, row, 0)
+                          }
+                        } else {
+                          const willDecay = Math.random() < chanceToDecay;
+                          if (willDecay) {
+                            this.setValue(col, row, 0)
+                          }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!collectAtTheBottom) {
+          this.clearRow(this.rowCount - 1)
+        }
+      }
+
+    isRowFull(rowIndex) {
+      for (let i = 0; i < this.colCount; i++) {
+        if (this.getValue(i, rowIndex) !== 1) return false;
+      }
+      return true;
+    }
+
+    drawRow(rowIndex = 0) {
+      ctx.fillStyle = "white"
+      ctx.fillRect(0, rowIndex * this.cellWidth, this.colCount * this.cellWidth, this.cellWidth)
+    }
+
+    drawChunk(rowIndex, colIndex, type = 1,ctx) {
+      let newIndex = colIndex;
+      const colCount = this.colCount;
+      // scan down row until empty cell is found, then draw starting from rowIndex to empty, if we reach the end cutoff and draw to the end, return the new colIndex
+      while (
+        newIndex < colCount &&
+        this.getValue(newIndex, rowIndex) === type
+      ) {
+        newIndex++;
+      }
+
+      ctx.fillStyle = debug ? colIndex % 2 === 0 ? "green" : "red" : "white"; // alternate white/gray
+      ctx.fillRect(
+        colIndex * this.cellWidth,
+        rowIndex * this.cellWidth,
+        (newIndex-colIndex) * this.cellWidth,
+        this.cellWidth
+      )
+
+      return newIndex;
+    }
+    draw(ctx) {
+        const rowCount = this.rowCount;
+        const colCount = this.colCount;
+        
+        for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+          ctx.fillStyle = "white";
+          //Check Row
+          if (this.isRowFull(rowIndex)) {
+            this.drawRow(rowIndex);
+            continue;
+          } else {
+            for (let colIndex = 0; colIndex < colCount; colIndex++) {
+              if (this.getValue(colIndex, rowIndex) === 1) {
+                ctx.fillStyle = "white";
+                colIndex = this.drawChunk(rowIndex, colIndex, 1, ctx) - 1
+              } else if (debug === true && this.getValue(colIndex, rowIndex) === 2) {
+                ctx.fillStyle = "blue";
+                colIndex = this.drawChunk(rowIndex, colIndex, 2, ctx) - 1
+              }
+            }
+          }
+        }
+    }
+  }
+
+  class Snowflake {
+      x = 0;
+      y = 0;
+      angle = Math.PI / 2 + Math.PI / 12
+      velocity = 4;
+      radius = 1;
+      hit = false;
+      amplitude = Math.random() * 20 + 10; // wave width
+      frequency = Math.random() * 0.02 + 0.01; // wave frequency
+      phase = Math.random() * Math.PI * 2; // random phase offset
+      baseX = 0; // starting x position
+
+      constructor(x, y, angle = Math.PI / 2 + Math.PI / 12) {
+          this.x = x;
+          this.y = y;
+          this.angle = angle;
+          this.baseX = x;
+      }
+
+      reset() {
+          this.y = -10;
+          this.x = Math.random() * canvas.width;
+          this.hit = true;
+      }
+
+      update() {
+          this.y += Math.sin(this.angle) * this.velocity;
+          this.x = this.baseX + Math.sin(this.y * this.frequency + this.phase) * this.amplitude;
+
+          const [col] = pile.getCoords(this.x, this.y);
+
+          if (
+              nodeCollideWithSnowPile(this.x, this.y) ||
+              nodeCollideWithElement(this.x, this.y)
+          ) {
+              const surfaceY = surfaceMap[col]; // top of surface or canvas bottom
+              const baseRow = pile.getCoords(this.x, surfaceY)[1];
+
+              // Randomly choose left (-1), center (0), or right (+1)
+              let offset = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+              let targetCol = Math.max(0, Math.min(col + offset, pile.piles.length - 1));
+
+              pile.add( targetCol, baseRow);
+              this.reset();
+          } else if (this.y > canvas.height) {
+              const baseRow = pile.getCoords(this.x, canvas.height)[1];
+              pile.add( col, baseRow);
+              this.reset();
+          } else {
+              this.hit = false;
+          }
+
+      }
+
+      draw(ctx) {
+      ctx.beginPath();
+      ctx.fillStyle = "white"
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fill();
+      }
+  }
+    
+
+  const drops = [];
+  const surfacePositions = [];
+  const pile = new SnowPile(canvas.width, canvas.height, squareLength);
+
+  function initializeCanvas() {
+  // existing code
+    surfacePositions.length = 0;
+    const canvasRect = canvas.getBoundingClientRect();
+    const container = canvas.parentElement.parentElement;
+
+    container.querySelectorAll(".surface").forEach((button) => {
+      const rect = button.getBoundingClientRect();
+      surfacePositions.push({
+        top: rect.top - canvasRect.top,
+        left: rect.left - canvasRect.left,
+        right: rect.right - canvasRect.left,
+        bottom: rect.bottom - canvasRect.top,
+        width: rect.width,
+        height: rect.height,
+      });
+    });
+
+    calculateSurfaceMap();
+  }
+
+function resizeCanvas() {
+    const container = canvas.parentElement;
+    const rect = container.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    initializeCanvas(); // <-- get surface positions first
+    pile.resize(canvas.width, canvas.height); // <-- now resize with correct surface positions
+}
+
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+initializeCanvas();
+
+function nodeCollideWithElement (x, y) {
+  return surfacePositions.some(pos => {
+    return x < pos.right && x > pos.left && y < pos.bottom && y > pos.top
+  })
+}
+
+function nodeCollideWithSnowPile (x, y) {
+    const [col, row] = pile.getCoords(x, y);
+    // only return true if colliding with the top most filled cell
+
+    return pile.isCellFull(col, row);
+}
+
+  
+  for (let i = 0; i < numberOfFlakes; i++) {
+    const randomXPlacement = Math.random() * canvas.width;
+    const randomYPlacement = Math.random() * -screen.height + -5;
+    drops.push(new Snowflake(randomXPlacement, randomYPlacement, Math.PI / 2 + Math.PI / 12))
+  }
+
+  let lastFrameTime = 0;
+  const frameDelay = 1000 / targetFPS;
+
+let fps = 0;
+let framesThisSecond = 0;
+let lastFpsUpdate = 0;
+
+function drawFPS(ctx, width, height) {
+  ctx.save();
+  ctx.font = "16px monospace";
+  ctx.fillStyle = "lime";
+  ctx.textAlign = "right";
+  if (fps < fpsLow && fps ) {
+    fpsLow = fps
+  }
+  ctx.fillText(`FPS Low: ${fpsLow}`, width - 40, height - 20);
+  ctx.fillText(`FPS: ${fps}`, width - 40, height - 40);
+  ctx.restore();
+}
+
+  function animate(time = 0) {
+
+  const delta = time - lastFrameTime;
+
+  if (!lastFpsUpdate) lastFpsUpdate = time;
+  const elapsed = time - lastFpsUpdate;
+
+  framesThisSecond++;
+  if (elapsed >= 1000) {
+    fps = framesThisSecond;
+    framesThisSecond = 0;
+    lastFpsUpdate = time;
+  }
+
+  if (delta >= frameDelay) {
+    lastFrameTime = time;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    //draw cells
+    pile.update();
+    pile.draw(ctx);
+
+    drops.forEach(drop => {
+        drop.update();
+        drop.draw(ctx);
+    })
+  }
+
+
+    //drawFPS(ctx, canvas.width, canvas.height);
+    requestAnimationFrame(animate)
+  }
+
+  animate();
+
+</script>
+

@@ -1,0 +1,33 @@
+---
+// This is a purely client-side component
+---
+<div id="heap-logger" class="sr-only" aria-hidden="true"></div>
+
+<script type="module">
+  const supportsMemory = performance.memory && performance.memory.usedJSHeapSize !== undefined;
+
+  if (!supportsMemory) {
+    console.warn("performance.memory is not supported in this browser.");
+  } else {
+    const readings = [];
+    const maxEntries = 300; // 5 minutes at 1 reading/sec
+
+    setInterval(() => {
+      const snapshot = {
+        time: new Date().toISOString(),
+        used: performance.memory.usedJSHeapSize,
+        total: performance.memory.totalJSHeapSize,
+        limit: performance.memory.jsHeapSizeLimit
+      };
+
+      readings.push(snapshot);
+      if (readings.length > maxEntries) readings.shift();
+
+      console.log(
+        `[Heap] ${snapshot.time} | Used: ${(snapshot.used / 1048576).toFixed(2)} MB`
+      );
+
+      // Optionally: send to server, plot in devtool overlay, etc.
+    }, 1000);
+  }
+</script>

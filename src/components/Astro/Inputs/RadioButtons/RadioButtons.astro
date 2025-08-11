@@ -1,0 +1,19 @@
+---
+// Match prop name to what you're passing
+const { name = "options", options = [], value = "", id = "" } = Astro.props;
+---
+<fieldset id={id} class="flex flex-col gap-2">
+  {options.map((opt: {label: string, value: string}) => (
+    <label class="inline-flex items-center gap-2 cursor-pointer">
+      <input
+        
+        type="radio"
+        name={name}
+        value={opt.value}
+        checked={opt.value === value}
+        class="accent-accent"
+      />
+      <span set:html={opt.label}></span>
+    </label>
+  ))}
+</fieldset>

@@ -38,7 +38,6 @@ export function initGarden(canvas: HTMLCanvasElement) {
 export default () => {
   const canvas = document.getElementById("garden-canvas");
   if (canvas instanceof HTMLCanvasElement) {
-    console.log("FOUND CANVAS");
     initGarden(canvas);
   }
 };

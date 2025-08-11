@@ -1,0 +1,62 @@
+---
+
+---
+<div>
+<label for="theme-picker" class={`inline-flex items-center cursor-pointer`}>
+    <span class="sr-only">{"aa"}</span>
+    <input
+        id="theme-picker"
+        type="checkbox"
+        class="peer sr-only"
+    
+    />
+    <div class="w-[40px] bg-gray-900 rounded-full h-full relative peer-focus:outline-none">
+        
+        <div id="slider" class="aspect-square rounded-full w-[20px] bg-accent hidden"/>
+    </div>
+</label>
+</div>
+<script>
+    import {gsap} from "gsap";
+
+    // color scheme
+    let colorScheme = localStorage.getItem("color-scheme") || "light";
+
+    const themePicker = document.getElementById("theme-picker") as HTMLInputElement;
+    const slider = document.getElementById("slider");
+    if (themePicker && slider) {
+        setTimeout(() => {slider.classList.remove("hidden")}, 1)
+        if (colorScheme === "dark") {
+            slider.style.transform = "translateX(20px)";
+            themePicker.setAttribute("checked", "true");
+        } else {
+            slider.style.transform = "translateX(0)";
+            themePicker.removeAttribute("checked");
+        }
+        
+        
+
+        themePicker.addEventListener("click", () => {
+            const currentScheme = colorScheme;
+
+            const newScheme = currentScheme === "light" ? "dark" : "light";
+            document.documentElement.classList.remove(currentScheme);
+            document.documentElement.classList.add(newScheme);
+            localStorage.setItem("color-scheme", newScheme)
+            colorScheme = newScheme;
+            themePicker.setAttribute("checked", newScheme === "dark" ? "true" : "false");
+
+            if (newScheme === "dark") {
+                gsap.to(slider, {
+                    duration: 0.2,
+                    x: "20px"
+                });
+            } else {
+                gsap.to(slider, {
+                    duration: 0.2,
+                    x: "0px"
+                });
+            }
+        })
+    }
+</script>

@@ -1,0 +1,136 @@
+import gsap from "gsap";
+import Draggable from "gsap/Draggable";
+gsap.registerPlugin(Draggable);
+
+export function carousel(items: Array<any>, config: any, track: Element) {
+    //setup
+    items = gsap.utils.toArray(items);
+    config = config || {};
+
+    let timeline = gsap.timeline({
+        repeat: config?.repeat,
+        paused: config?.paused,
+        defaults: {ease: "none"},
+        onReverseComplete: () => {timeline.totalTime(timeline.rawTime() + timeline.duration() * 100)},
+    });
+
+    length = items.length;
+    let startX = items[0].offsetLeft;
+    let times: number[] = [];
+    let widths: number[] = [];
+    let xPercents: number[] = [];
+    let curIndex = 0;
+    let pixelsPerSecond = (config?.speed || 1) * 100;
+    // some browsers shift by a pixel to accommodate flex layouts, so for example if width is 20% the first element's width might be 242px, and the next 243px, alternating back and forth. So we snap to 5 percentage points to make things look more natural
+    let snap = config?.snap === false ? (v: any) => v : gsap.utils.snap(config.snap || 1);
+    let totalWidth;
+    let curX;
+    let distanceToStart;
+    let distanceToLoop;
+    let item;
+    let i;
+
+    // convert x to xPercent to make things responsive and populate widths/xPercents for faster lookups
+    gsap.set(items, {
+        xPercent: (index, element) => {
+            let width = (widths[index] = parseFloat(gsap.getProperty(element, "width", "px").toString()));
+            const x = parseFloat(gsap.getProperty(element, "x", "px").toString());
+            const xPercent = Number(gsap.getProperty(element, "xPercent"));
+            xPercents[index] = snap((x / width) * 100 + xPercent);
+            return xPercents[index];	
+        }
+    });
+
+    gsap.set(items, {x: 0});
+
+    totalWidth =
+        items[length - 1].offsetLeft +
+        (xPercents[length - 1] / 100) * widths[length - 1] -
+        startX +
+        items[length - 1].offsetWidth *
+        Number(gsap.getProperty(items[length - 1], "scaleX") || 0) +
+        (parseFloat(config.paddingRight) || 0);
+
+    for (i = 0; i < length; i++) {
+        item = items[i];
+        curX = (xPercents[i] / 100) * widths[i];
+        distanceToStart = item.offsetLeft + curX - startX;
+        distanceToLoop =
+        distanceToStart + widths[i] * Number(gsap.getProperty(item, "scaleX") || 0);
+        timeline.to(
+        item,
+        {
+            xPercent: snap(((curX - distanceToLoop) / widths[i]) * 100),
+            duration: distanceToLoop / pixelsPerSecond,
+        },
+        0
+        )
+        .fromTo(
+            item,
+            {
+            xPercent: snap(
+                ((curX - distanceToLoop + totalWidth) / widths[i]) * 100
+            ),
+            },
+            {
+            xPercent: xPercents[i],
+            duration:
+                (curX - distanceToLoop + totalWidth - curX) / pixelsPerSecond,
+            immediateRender: false,
+            },
+            distanceToLoop / pixelsPerSecond
+        )
+        .add("label" + i, distanceToStart / pixelsPerSecond);
+        times[i] = distanceToStart / pixelsPerSecond;
+    }
+    function toIndex(index: number, vars: any) {
+        vars = vars || {};
+        Math.abs(index - curIndex) > length / 2 &&
+        (index += index > curIndex ? -length : length); // always go in the shortest direction
+        let newIndex = gsap.utils.wrap(0, length, index),
+        time = times[newIndex];
+        if (time > timeline.time() !== index > curIndex) {
+        // if we're wrapping the timeline's playhead, make the proper adjustments
+        vars.modifiers = { time: gsap.utils.wrap(0, timeline.duration()) };
+        time += timeline.duration() * (index > curIndex ? 1 : -1);
+        }
+        curIndex = newIndex;
+        vars.overwrite = true;
+        return timeline.tweenTo(time, vars);
+    }
+    timeline.next = (vars) => toIndex(curIndex + 1, vars);
+    timeline.previous = (vars) => toIndex(curIndex - 1, vars);
+    timeline.current = () => curIndex;
+    timeline.toIndex = (index: number, vars) => toIndex(index, vars);
+    timeline.times = times;
+    timeline.progress(1, true).progress(0, true); // pre-render for performance
+    if (config.reversed && timeline?.vars?.onReverseComplete) {
+        timeline.vars.onReverseComplete();
+        timeline.reverse();
+    }
+
+    if (config.draggable) {
+        const proxy = document.createElement("div"); // invisible proxy to track dragging
+        let startX = 0;
+
+        Draggable.create(proxy, {
+            type: "x",
+            trigger: track, // or the parent div that wraps all boxes
+            onPress() {
+                timeline.pause();
+                startX = this.x;
+            },
+            onDrag() {
+                const deltaX = this.x - startX;
+                timeline.progress(timeline.progress() - deltaX / totalWidth);
+                startX = this.x;
+            },
+            onRelease() {
+                timeline.play();
+            },
+            inertia: true // optional: adds momentum
+        });
+    }
+
+    return timeline;
+}

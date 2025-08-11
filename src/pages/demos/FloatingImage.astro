@@ -1,0 +1,186 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+import BaseDemoLayout from "../../layouts/demo/BaseDemoLayout.astro";
+import type { BaseDemoLayoutProps } from "./types";
+import DemoSubsection from "../../layouts/demo/DemoSubsection.astro";
+import RadioButtons from "../../components/Astro/Inputs/RadioButtons/RadioButtons.astro";
+
+const base: BaseDemoLayoutProps = {
+		dateAdded: "07/25/2025",
+		title: "Floating Image",
+		topics: ["Image", 'Text Wrapping'],
+		sections: [
+			{ id: "intro", title: "Introduction" },
+            { id: "float", title: "Float" },
+            { id: "shape-outside", title: "Shape Outside" },
+			
+		]
+	};
+
+    const options = [
+        {
+            value: "left",
+            label: (
+                `<span>
+                    <span class="bg-muted text-accent px-1">left</span> - The element must float on the left side of its containing block.
+                </span>`
+            )
+        },
+        {
+            value: "right",
+            label: (
+                `<span>
+                    <span class="bg-muted text-accent px-1">right</span> - The element must float on the right side of its containing block.
+                </span>`
+            )
+        },
+        {
+            value: "none",
+            label: (
+                `<span>
+                    <span class="bg-muted text-accent px-1">none</span> (default) - The element must not float.
+                </span>`
+            )
+        },
+        {
+            value: "inline-start",
+            label: (
+                `<span>
+                    <span class="bg-muted text-accent px-1">inline-start</span> - The element must float on the start side of its containing block (left for LTR scripts, right for RTL).
+                </span>`
+            )
+        },
+        {
+            value: "inline-end",
+            label: (
+                `<span>
+                    <span class="bg-muted text-accent px-1">inline-end</span> - The element must float on the end side of its containing block (right for LTR scripts, left for RTL).
+                </span>`
+            )
+        }
+    ]
+
+    const shapeOptions = [
+        { value: 'circle(50% at 50% 50%)', label: 'Circle' },
+        { value: 'ellipse(50% 35% at 50% 50%)', label: 'Ellipse' },
+        { value: 'inset(10% 10% 10% 10%)', label: 'Inset (rounded rect)' },
+        { value: 'polygon(0% 0%, 100% 0%, 0% 75%, 50% 100%, 0% 75%)', label: 'Polygon (triangle)' },
+        { value: 'url("/logo_tiny.png")', label: "image" }
+    ];
+
+---
+
+<Layout hasNavbar>
+    <BaseDemoLayout {...base}>
+		<DemoSubsection id="introduction" title="Introduction">
+            <p>
+                Sometimes we want text to wrap around images, elements or shapes in general. Whether is be implementing a drop cap, or inserting a cool graphic into a paragraph, there's a lot of reasons why someone might want to have text wrapping with a non-square container.
+                The container can refine the shape-outside with one of the following:
+            </p>
+            <ul>
+                <li>ellipse() - rounded shapes</li>
+                <li>inset() - rectangle shapes</li>
+                <li>circle() - circles</li>
+                <li>polygon() - shapes with 3 or more vertices</li>
+                <li>url() - generate shapes from an image</li>
+            </ul>
+            
+        </DemoSubsection>
+        <DemoSubsection id="float" title="Float">
+            <p>
+                The <span class="text-accent">float</span> css property places an element to the left or right side of its container. This is what allows text and inline elements to wrap around it. <span class="text-accent">float</span> can be one of the following values:
+            </p>
+            <ul class="mt-2">
+                <li>left - The element must float on the left side of its containing block.</li>
+                <li>right - The element must float on the right side of its containing block.</li>
+                <li>none (default) - The element must not float.</li>
+                <li>inline-start - The element must float on the start side of its containing block. That is the left side with ltr scripts, and the right side with rtl scripts.</li>
+                <li>inline-end - The element must float on the end side of its containing block. That is the right side with ltr scripts, and the left side with rtl scripts.</li>
+            </ul>
+            <RadioButtons
+                value="left"
+                options={options}
+                id="float-example-input"
+            />
+
+            <div class="mt-4 max-w-6/12 mx-auto text-center">
+                <div id="float-example-square" style="float: left;" class="bg-accent border border-border border-solid w-5 aspect-square bg-contain"></div>
+                <p class="text-justify">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec gravida eget metus non lobortis. Integer ac imperdiet enim. Suspendisse tempor est sed ante aliquam, ut condimentum leo hendrerit. Maecenas ut pellentesque dolor, eget viverra lectus. Etiam at sapien nec quam suscipit feugiat. Proin at lectus eget diam semper congue. Praesent rutrum sapien at sapien tincidunt, quis tincidunt eros vulputate. Praesent varius sed nibh vel pretium. 
+                </p>
+            </div>
+
+            <script>
+                const container = document.getElementById('float');
+                if (container) {
+                    const input = container.querySelector('#float-example-input') as HTMLFieldSetElement
+                    const square = container.querySelector('#float-example-square') as HTMLDivElement;
+                    
+                    if (input && square) {
+                        input?.addEventListener('change', (e) => {
+                            const target = e?.target as HTMLInputElement;
+                            const value = target?.value;
+
+                            square.style.float = value;
+                        })
+                    }
+
+                }
+            </script>
+
+        </DemoSubsection>
+
+        <DemoSubsection id="shape-outside" title="Shape Outside">
+  <p>The <span class="text-accent">shape-outside</span> property defines the shape used to wrap inline content around a floated element. This can create visually interesting text flow effects around non-rectangular shapes.</p>
+
+  <RadioButtons
+    id="shape-outside-input"
+    value="circle(50% at 50% 50%)"
+    options={shapeOptions.map(opt => ({ value: opt.value, label: opt.label }))}
+  />
+
+  <div class="mt-4 max-w-6/12 mx-auto text-center">
+    <div
+        id="shape-outside-demo"
+        style={`float: left; background-image: url('/logo_tiny.png'); background-size: cover; background-position: center;`}
+        class="border border-border border-solid w-20 aspect-square "
+    ></div>
+    <p class="text-justify">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod lacus nec mauris fringilla, ac rhoncus ipsum pulvinar. Praesent rhoncus purus at nulla cursus, vel finibus nulla tincidunt. Mauris ut orci aliquet, dignissim purus sed, pulvinar ipsum. Nullam laoreet eu urna ut cursus.
+    </p>
+  </div>
+
+  <script>
+    const container = document.getElementById('shape-outside') as HTMLDivElement;
+    if (container) {
+      const input = container.querySelector('#shape-outside-input') as HTMLFieldSetElement;
+      const demo = container.querySelector('#shape-outside-demo') as HTMLDivElement;
+
+      if (input && demo) {
+        input.addEventListener('change', (e) => {
+            const target = e?.target as HTMLInputElement;
+            const value = target?.value;
+
+
+            demo.style.shapeOutside = value;
+            demo.style.clipPath = value;
+          //demo.style.webkitShapeOutside = value;
+
+          
+
+          // Optional: Adjust border radius based on shape type for visual appeal
+          if(value.startsWith('circle') || value.startsWith('ellipse')) {
+            demo.style.borderRadius = '50%';
+          } else if(value.startsWith('inset')) {
+            demo.style.borderRadius = '15%';
+          } else {
+            demo.style.borderRadius = '0';
+          }
+        });
+      }
+    }
+  </script>
+</DemoSubsection>
+    </BaseDemoLayout>
+</Layout>

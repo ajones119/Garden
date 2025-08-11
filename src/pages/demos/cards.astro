@@ -1,0 +1,35 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+import BaseDemoLayout from "../../layouts/demo/BaseDemoLayout.astro";
+import type { BaseDemoLayoutProps } from "./types";
+import CodeBlock from "../../components/Astro/CodeBlock.astro";
+import DemoSubsection from "../../layouts/demo/DemoSubsection.astro";
+import BasicButton from "../../components/Astro/Buttons/BasicButton.astro";
+import TiltContainer from "../../components/Astro/PerspectiveContainers/TiltContainer.astro";
+
+const base: BaseDemoLayoutProps = {
+		dateAdded: "08/10/2025",
+		title: "Cards",
+		topics: ["SVG", "Filters", "Displacement"],
+		sections: [
+			{ id: "intro", title: "Introduction" },
+			{ id: "carousel", title: "Carousel" },
+			{ id: "scramble-text", title: "Scramble Text" },
+		]
+	};
+
+const carouselList: number[] = [];
+
+for(let i = 0; i < 20; i++) {
+	carouselList.push(i)
+}
+---
+
+<Layout hasNavbar>
+    <BaseDemoLayout {...base}>
+		<DemoSubsection id="carousel" title="Carousel">
+           
+        </DemoSubsection>
+    </BaseDemoLayout>
+</Layout>

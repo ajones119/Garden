@@ -8,6 +8,7 @@ import PerformantSlowTextReveal from "../../components/React/SlowTextReveal/Perf
 import NonPerformantSlowTextReveal from "../../components/React/SlowTextReveal/NonPerformantSlowTextReveal"
 import SlowServer from "../../components/Astro/SlowServer.astro";
 import SPALayout from "../../layouts/SPALayout.astro";
+import DummyComponent from "../../components/React/Dummy Component";
 
 const text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sollicitudin risus sed orci commodo sollicitudin. Vestibulum elementum ipsum id elit congue, lacinia pretium metus gravida. Fusce vestibulum tellus ullamcorper, iaculis magna ac, ultricies leo. Proin elementum pellentesque ipsum, hendrerit lacinia mi tincidunt a. Morbi faucibus elit at purus pellentesque, interdum sodales urna congue. Integer volutpat est et accumsan aliquam. Vestibulum non sagittis lacus. In vel ornare est, elementum elementum sem. Vestibulum nec cursus diam. Maecenas suscipit sagittis elementum. Vivamus nibh nibh, tempus non congue quis, cursus vel enim. Nulla maximus fringilla nisl et commodo. Sed feugiat sem lectus, eu porta odio vestibulum vel.";
 
@@ -30,9 +31,9 @@ for(let i = 0; i < 20; i++) {
 ---
 
 <SPALayout hasNavbar>
-    <BaseDemoLayout {...base} transition:name="slide">
+    <BaseDemoLayout {...base} transition:animate="slide">
         <PageSection id="performant-react">
-            <a class="text-lg font-bold text-accent" href="/demos/TypewriterAnimation2">Go to second page</a>
+            <a class="text-lg font-bold text-accent" href="/demos/TypewriterAnimation">Go to first page</a>
             <div class="ml-4">
                 <PerformantSlowTextReveal client:idle text={text} />
             </div>
@@ -86,6 +87,7 @@ for(let i = 0; i < 20; i++) {
             <p style="margin-top: 2rem;">
                 This paragraph renders immediately — even though the deferred block takes 5 seconds.
             </p>
+            <DummyComponent client:idle />
         </PageSection>
     </BaseDemoLayout>
 </SPALayout>

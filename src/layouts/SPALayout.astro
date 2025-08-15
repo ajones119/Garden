@@ -1,0 +1,134 @@
+---
+import "../styles/global.css";
+import NavBar from "../components/Astro/NavBar.astro"
+import { ClientRouter } from "astro:transitions";
+
+const {hasNavbar} = Astro.props
+---
+
+<!doctype html>
+<script is:inline>
+// Re-apply dark mode on client-side navigation (Astro, SPA, etc)
+(function() {
+  function applyTheme() {
+	var scheme = localStorage.getItem('color-scheme') || 'dark';
+	if (scheme === 'dark') {
+	  document.documentElement.classList.add('dark');
+	} else {
+	  document.documentElement.classList.remove('dark');
+	}
+
+	document.documentElement.classList.add('scroll-smooth');
+	document.documentElement.classList.add('[scroll-padding-top:64px]');
+	
+  }
+  applyTheme();
+  window.addEventListener('astro:after-swap', applyTheme);
+})();
+</script>
+<html lang="en" class={`bg-background scroll-smooth`}>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.png" />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Iceberg&family=Michroma&family=Uncial+Antiqua&display=swap" rel="stylesheet">
+        <ClientRouter />
+		<meta name="generator" content={Astro.generator} />
+		<title>Garden</title>
+	</head>
+	<body class={`text-foreground bg-background`}>
+		{hasNavbar && <NavBar />}
+		<div id="pageContent" class={`${hasNavbar ? "mt-[48px]" : ""} transition-all duration-200`}>
+			<slot />
+		</div>
+	</body>
+</html>
+
+<style>
+	html,
+	body {
+		margin: 0 auto;
+		width: 100%;		
+	}
+</style>
+
+<script>
+	// color scheme
+	let colorScheme = localStorage.getItem("color-scheme") || "light";
+	console.log("Color scheme:", colorScheme);
+	document.documentElement.classList.add(colorScheme);
+
+	// Device orientation permission prompt
+	function setupDeviceOrientation() {
+	if (
+		typeof window.DeviceOrientationEvent !== 'undefined' &&
+		'requestPermission' in window.DeviceOrientationEvent &&
+		typeof window.DeviceOrientationEvent.requestPermission === 'function'
+	) {
+		// Only show button if permission not already granted in this session
+		if (sessionStorage.getItem('device-orientation-granted') === 'true') {
+			window.dispatchEvent(new CustomEvent('deviceorientationpermissiongranted'));
+			return;
+		}
+		let btn = document.createElement('button');
+		btn.textContent = 'Enable Device Orientation';
+		btn.style.position = 'fixed';
+		btn.style.bottom = '24px';
+		btn.style.right = '24px';
+		btn.style.zIndex = '10000';
+		btn.style.padding = '12px 20px';
+		btn.style.fontSize = '1rem';
+		btn.style.background = '#222';
+		btn.style.color = '#fff';
+		btn.style.border = 'none';
+		btn.style.borderRadius = '8px';
+		btn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+		btn.style.cursor = 'pointer';
+		document.body.appendChild(btn);
+		btn.addEventListener('click', function() {
+			if (window.DeviceOrientationEvent) {
+				window.DeviceOrientationEvent?.requestPermission().then((state: string) => {
+					if (state === 'granted') {
+						sessionStorage.setItem('device-orientation-granted', 'true');
+						window.dispatchEvent(new CustomEvent('deviceorientationpermissiongranted'));
+						btn.remove();
+					} else {
+						alert('Permission denied for device orientation.');
+					}
+				}).catch(() => {
+					alert('Permission request failed.');
+				});
+			}
+		});
+	} else {
+		// Non-iOS: permission not required, fire event immediately
+		window.dispatchEvent(new CustomEvent('deviceorientationpermissiongranted'));
+	}
+	}
+	setupDeviceOrientation();
+
+	// Example: listen for permission granted and add your event listener
+	window.addEventListener('deviceorientationpermissiongranted', () => {
+		// You can now safely add your deviceorientation event listener in your canvas code
+		// window.addEventListener('deviceorientation', ...)
+	});
+
+	const navMenuButton = document.getElementById("menuToggle");
+	const mainContent = document.getElementById("pageContent");
+	let isNavMenuOpen = false;
+
+	if (navMenuButton && mainContent) {
+		navMenuButton?.addEventListener("click", () => {
+			if (isNavMenuOpen) {
+				mainContent.classList.remove("scale-99");
+			} else {
+				mainContent.classList.add("scale-99");
+			}
+
+			isNavMenuOpen = !isNavMenuOpen;
+		})
+	}
+
+</script>

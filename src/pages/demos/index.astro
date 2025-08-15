@@ -18,6 +18,8 @@ const Pages: {href: string, title: string, description: string, imageUrl: ImageM
 	{ href: "/demos/3dcss", title: "3d Effect in CSS", description: "How can css transforms move your elements into the 3rd dimension", imageUrl: Squares, createdAt: new Date("08/02/2025") },
 	{ href: "/demos/SnowfallCanvas", title: "Snowfall Canvas", description: "Snowy ui for winter", imageUrl: SnowImage, createdAt: new Date("08/02/2025") },
 	{ href: "/demos/FloatingImage", title: "Floating Image", description: "Inline images with text wrapping", imageUrl: FloatingImage, createdAt: new Date("08/06/2025") },
+	{ href: "/demos/TypewriterAnimation", title: "TypewriterAnimation", description: "Inline images with text wrapping", imageUrl: FloatingImage, createdAt: new Date("08/06/2025") },
+
 
 ]
 ---
@@ -27,7 +29,7 @@ const Pages: {href: string, title: string, description: string, imageUrl: ImageM
 		{Pages.map((page) => {
 			return (
 				<TiltContainer className="group cursor-pointer h-80 shadow-sm hover:shadow-lg transition-all  hover:border-none rounded-lg border border-border border-solid w-full sm:w-80 duration-300 max-w-xs ">
-					<a href={page.href} class="block transform-3d h-full rgb after:rounded-lg rounded-lg bg-background hover:bg-transparent transition-colors duration-200">
+					<a data-astro-prefetch href={page.href} class="block transform-3d h-full rgb after:rounded-lg rounded-lg bg-background hover:bg-transparent transition-colors duration-200">
 						<div class="transform-3d">
 							<div class="h-48 w-full overflow-hidden rounded-t-lg cardImage transform-3d group-hover:translate-z-[75px]">
 								<Image 
@@ -64,7 +66,7 @@ const Pages: {href: string, title: string, description: string, imageUrl: ImageM
 		content: "";
 		background: #833AB4;
 		transform: translateZ(-1px);
-		filter: blur(8px);
+		filter: blur(16px);
 		background: linear-gradient(
 			45deg,
 			rgba(131, 58, 180, 1) 0%,
@@ -81,6 +83,7 @@ const Pages: {href: string, title: string, description: string, imageUrl: ImageM
 	.rgb:hover::after {
 		content: "";
 		inset: -4px;
+		filter: blur(2px);
 	}
 
 	@keyframes rgb {

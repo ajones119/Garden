@@ -4,6 +4,9 @@ import solidJs from "@astrojs/solid-js";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
+  prefetch: true,
+  //
+  output: 'server',
   integrations: [
     solidJs({
       include: ['**/Solid/**'],

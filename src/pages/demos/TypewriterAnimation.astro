@@ -1,0 +1,89 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+import BaseDemoLayout from "../../layouts/demo/BaseDemoLayout.astro";
+import type { BaseDemoLayoutProps } from "./types";
+import PageSection from "../../layouts/PageSection.astro";
+import PerformantSlowTextReveal from "../../components/React/SlowTextReveal/PerformantSlowTextReveal"
+import NonPerformantSlowTextReveal from "../../components/React/SlowTextReveal/NonPerformantSlowTextReveal"
+import SlowServer from "../../components/Astro/SlowServer.astro";
+
+const text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sollicitudin risus sed orci commodo sollicitudin. Vestibulum elementum ipsum id elit congue, lacinia pretium metus gravida. Fusce vestibulum tellus ullamcorper, iaculis magna ac, ultricies leo. Proin elementum pellentesque ipsum, hendrerit lacinia mi tincidunt a. Morbi faucibus elit at purus pellentesque, interdum sodales urna congue. Integer volutpat est et accumsan aliquam. Vestibulum non sagittis lacus. In vel ornare est, elementum elementum sem. Vestibulum nec cursus diam. Maecenas suscipit sagittis elementum. Vivamus nibh nibh, tempus non congue quis, cursus vel enim. Nulla maximus fringilla nisl et commodo. Sed feugiat sem lectus, eu porta odio vestibulum vel.";
+
+const base: BaseDemoLayoutProps = {
+		dateAdded: "07/25/2025",
+		title: "Slow Typewriter",
+		topics: ["GSAP", 'animation', 'react performance'],
+		sections: [
+			{ id: "performant-react", title: "Performant React" },
+            { id: "nonperformant-react", title: "Slow React" },
+            { id: "gsap", title: "GSAP" },
+		]
+	};
+
+const carouselList: number[] = [];
+
+for(let i = 0; i < 20; i++) {
+	carouselList.push(i)
+}
+---
+
+<Layout hasNavbar>
+    <BaseDemoLayout {...base}>
+        <PageSection id="performant-react">
+            <div class="ml-4">
+                <PerformantSlowTextReveal client:idle text={text} />
+            </div>
+        </PageSection>
+        <PageSection id="nonperformant-react">
+            <div class="ml-4">
+                <NonPerformantSlowTextReveal client:visible text={text} />
+            </div>
+        </PageSection>
+        <PageSection id="nonperformant-react">
+            <div class="ml-4">
+                <NonPerformantSlowTextReveal client:visible text={text} />
+            </div>
+        </PageSection>
+        <PageSection id="gsap">
+            <div class="ml-4">
+                <span id="gsap-slow-reveal"></span>
+                <script>
+                    import gsap from "gsap";
+                    const text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sollicitudin risus sed orci commodo sollicitudin. Vestibulum elementum ipsum id elit congue, lacinia pretium metus gravida. Fusce vestibulum tellus ullamcorper, iaculis magna ac, ultricies leo. Proin elementum pellentesque ipsum, hendrerit lacinia mi tincidunt a. Morbi faucibus elit at purus pellentesque, interdum sodales urna congue. Integer volutpat est et accumsan aliquam. Vestibulum non sagittis lacus. In vel ornare est, elementum elementum sem. Vestibulum nec cursus diam. Maecenas suscipit sagittis elementum. Vivamus nibh nibh, tempus non congue quis, cursus vel enim. Nulla maximus fringilla nisl et commodo. Sed feugiat sem lectus, eu porta odio vestibulum vel.";
+
+
+                    const element = document.getElementById("gsap-slow-reveal")
+                    if (element) {
+                        gsap.to({}, {
+                            duration: text.length * 0.02,
+                            repeat: 0,
+                            onUpdate: function () {
+                            const progress = this.progress();
+                            const charCount = Math.floor(progress * text.length);
+                            element.textContent = text.slice(0, charCount)
+                        },
+                        ease: "none" // no easing for uniform typing
+
+                    })
+                    }
+                </script>
+            </div>
+        </PageSection>
+        <PageSection id="slowserver">
+            <p>
+                The section below is rendered with <code>server:defer</code>, so the rest of this
+                page loads instantly.
+            </p>
+
+            <!-- Deferred content -->
+            <SlowServer server:defer >
+                <div slot="fallback">This is a fallback or loading while the server finishes its work</div>
+            </SlowServer>
+
+            <p style="margin-top: 2rem;">
+                This paragraph renders immediately — even though the deferred block takes 5 seconds.
+            </p>
+        </PageSection>
+    </BaseDemoLayout>
+</Layout>

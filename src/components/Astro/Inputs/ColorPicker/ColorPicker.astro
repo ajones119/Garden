@@ -1,0 +1,183 @@
+---
+const {
+  id = "",
+  name = "",
+  label = "",
+  value = "#50c878",
+  disabled = false,
+  className = ""
+} = Astro.props;
+---
+
+<div class={`modern-color-picker-container ${className}`}>
+  {label && <label for={id} class="modern-color-picker-label">{label}</label>}
+  <div class="color-picker-wrapper">
+    <input
+      type="color"
+      id={id}
+      name={name || id}
+      value={value}
+      disabled={disabled}
+      class="modern-color-picker"
+    />
+    <input
+      type="text"
+      value={value}
+      disabled={disabled}
+      class="modern-color-text"
+      data-color-input-for={id}
+      placeholder="#000000"
+      maxlength="7"
+    />
+  </div>
+</div>
+
+<style>
+  .modern-color-picker-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 28rem;
+  }
+
+  .modern-color-picker-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-muted-foreground);
+    transition: color var(--transition-speed) ease;
+  }
+
+  .color-picker-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .modern-color-picker {
+    width: var(--color-picker-size);
+    height: var(--color-picker-size);
+    padding: 0;
+    border: var(--color-picker-border-width) solid var(--color-border);
+    border-radius: var(--color-picker-border-radius);
+    cursor: pointer;
+    transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--color-picker-shadow);
+    background: transparent;
+    flex-shrink: 0;
+  }
+
+  .modern-color-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border-radius: calc(var(--color-picker-border-radius) - 2px);
+  }
+
+  .modern-color-picker::-webkit-color-swatch {
+    border: none;
+    border-radius: calc(var(--color-picker-border-radius) - 2px);
+  }
+
+  .modern-color-picker::-moz-color-swatch {
+    border: none;
+    border-radius: calc(var(--color-picker-border-radius) - 2px);
+  }
+
+  .modern-color-picker:hover:not(:disabled) {
+    border-color: var(--color-primary);
+    box-shadow: var(--color-picker-shadow-hover);
+    transform: scale(1.05);
+  }
+
+  .modern-color-picker:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: var(--color-picker-shadow-focus);
+  }
+
+  .modern-color-picker:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .modern-color-picker:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .modern-color-text {
+    flex: 1;
+    padding: var(--input-padding-y) var(--input-padding-x);
+    font-size: var(--input-font-size);
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    color: var(--color-foreground);
+    background: var(--color-background);
+    border: var(--input-border-width) solid var(--color-border);
+    border-radius: var(--input-border-radius);
+    outline: none;
+    transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--input-shadow);
+  }
+
+  .modern-color-text:hover:not(:disabled) {
+    border-color: var(--color-primary);
+  }
+
+  .modern-color-text:focus {
+    border-color: var(--color-primary);
+    box-shadow: var(--input-shadow-focus);
+  }
+
+  .modern-color-text:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--color-muted);
+  }
+</style>
+
+<script>
+  // Sync color picker with text input
+  document.querySelectorAll('.modern-color-picker').forEach((colorPicker) => {
+    const colorInput = colorPicker as HTMLInputElement;
+    const textInput = document.querySelector(`[data-color-input-for="${colorInput.id}"]`) as HTMLInputElement;
+    
+    if (!textInput) return;
+
+    // Update text when color picker changes
+    colorInput.addEventListener('input', (e) => {
+      const target = e.target as HTMLInputElement;
+      textInput.value = target.value.toUpperCase();
+    });
+
+    // Update color picker when text changes
+    textInput.addEventListener('input', (e) => {
+      const target = e.target as HTMLInputElement;
+      const value = target.value;
+      
+      // Validate hex color
+      if (/^#[0-9A-F]{6}$/i.test(value)) {
+        colorInput.value = value;
+      }
+    });
+
+    // Format on blur
+    textInput.addEventListener('blur', (e) => {
+      const target = e.target as HTMLInputElement;
+      let value = target.value.trim();
+      
+      // Add # if missing
+      if (value.length > 0 && !value.startsWith('#')) {
+        value = '#' + value;
+      }
+      
+      // Validate and correct
+      if (/^#[0-9A-F]{6}$/i.test(value)) {
+        target.value = value.toUpperCase();
+        colorInput.value = value;
+      } else {
+        // Reset to color picker value
+        target.value = colorInput.value.toUpperCase();
+      }
+    });
+  });
+</script>
+

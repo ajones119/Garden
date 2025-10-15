@@ -4,12 +4,13 @@ import { $gradient, addColor, changeColor, removeColor, setGradient, setGradient
 import BasicButton from "../../../../components/React/Buttons/BasicButton";
 import { useStore } from "@nanostores/react";
 import RadioButtons from "../../../../components/React/Inputs/RadioButtons";
+import NumberInput from "../../../../components/React/Inputs/NumberInput";
 
 
 const Controls = () => {
     const gradient = useStore($gradient)
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 p-4">
             <RadioButtons<GradientType>
                 name="Gradient Type"
                 id="gradient-type"
@@ -18,18 +19,36 @@ const Controls = () => {
                 options={[{value: "linear", label: "Linear"}, {value: "conic", label: "Conic"}, {value: "radial", label: "Radial"}]}
             />
             {["linear", "conic"].includes(gradient.type) && (
-                <div className="flex gap-2">
-                    <label htmlFor="angle-input" className="text-muted-foreground">Angle</label>
-                    <input id="angle-input" className="shrink border-border border px-1 " type="number" value={gradient.angle} onChange={(e) => setGradient({...gradient, angle: Number(e?.target?.value) || 0})} />
-                </div>
+                <NumberInput
+                    id="angle-input"
+                    label="Angle"
+                    value={gradient.angle}
+                    min={0}
+                    max={360}
+                    onChange={(value) => setGradient({...gradient, angle: value})}
+                />
             )}
 
             {["radial", "conic"].includes(gradient.type) && (
-                <div className="flex gap-2">
-                    <label htmlFor="x-pos-input" className="text-muted-foreground">X</label>
-                    <input id="x-pos-input" className="shrink w-10 rounded-md border-border border px-1 " type="number" value={gradient?.position?.x} onChange={(e) => setGradientPosition(Number(e.target.value), gradient?.position?.y || 0)} />
-                    <label htmlFor="y-pos-input" className="text-muted-foreground">Y</label>
-                    <input id="y-pos-input" className="shrink w-10 rounded-md border-border border px-1 " type="number" value={gradient?.position?.y} onChange={(e) => setGradientPosition(gradient?.position?.x || 0, Number(e.target.value))} />
+                <div className="flex gap-4">
+                    <NumberInput
+                        id="x-pos-input"
+                        label="X Position"
+                        value={gradient?.position?.x || 0}
+                        min={0}
+                        max={100}
+                        onChange={(value) => setGradientPosition(value, gradient?.position?.y || 0)}
+                        className="flex-1"
+                    />
+                    <NumberInput
+                        id="y-pos-input"
+                        label="Y Position"
+                        value={gradient?.position?.y || 0}
+                        min={0}
+                        max={100}
+                        onChange={(value) => setGradientPosition(gradient?.position?.x || 0, value)}
+                        className="flex-1"
+                    />
                 </div>
             )}
         </div>

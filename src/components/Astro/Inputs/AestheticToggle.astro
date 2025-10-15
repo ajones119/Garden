@@ -1,0 +1,178 @@
+---
+// Aesthetic toggle: Modern vs Retro
+---
+
+<div class="aesthetic-toggle-container">
+    <label for="aesthetic-picker" class="aesthetic-toggle-label">
+        <span class="sr-only">Toggle aesthetic: Modern / Retro</span>
+        <input
+            id="aesthetic-picker"
+            type="checkbox"
+            class="aesthetic-checkbox"
+        />
+        <div class="toggle-track">
+            <div class="toggle-icons">
+                <span class="icon-modern">✨</span>
+                <span class="icon-retro">🕹️</span>
+            </div>
+            <div id="aesthetic-slider" class="toggle-slider"></div>
+        </div>
+        <span class="toggle-label-text" id="aesthetic-label">Modern</span>
+    </label>
+</div>
+
+<style>
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
+
+    .aesthetic-toggle-container {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .aesthetic-toggle-label {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .aesthetic-checkbox {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .toggle-track {
+        position: relative;
+        width: 60px;
+        height: 32px;
+        background: var(--color-muted);
+        border: 2px solid var(--color-border);
+        border-radius: 16px;
+        transition: all var(--transition-speed) ease;
+    }
+
+    .toggle-icons {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 6px;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .icon-modern,
+    .icon-retro {
+        font-size: 14px;
+        transition: opacity var(--transition-speed) ease;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 24px;
+        height: 24px;
+        background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+        border-radius: 50%;
+        transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        z-index: 2;
+    }
+
+    .toggle-label-text {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--color-foreground);
+        min-width: 60px;
+    }
+
+    .aesthetic-toggle-label:hover .toggle-track {
+        border-color: var(--color-primary);
+    }
+
+    .aesthetic-toggle-label:hover .toggle-slider {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+
+    // Get aesthetic preference from localStorage or default to "modern"
+    let aesthetic = localStorage.getItem("aesthetic") || "modern";
+
+    const aestheticPicker = document.getElementById("aesthetic-picker") as HTMLInputElement;
+    const aestheticSlider = document.getElementById("aesthetic-slider");
+    const aestheticLabel = document.getElementById("aesthetic-label");
+
+    if (aestheticPicker && aestheticSlider && aestheticLabel) {
+        // Initialize UI based on current aesthetic
+        const initializeUI = () => {
+            if (aesthetic === "retro") {
+                aestheticSlider.style.transform = "translateX(28px)";
+                aestheticPicker.checked = true;
+                aestheticLabel.textContent = "Retro";
+            } else {
+                aestheticSlider.style.transform = "translateX(0)";
+                aestheticPicker.checked = false;
+                aestheticLabel.textContent = "Modern";
+            }
+        };
+
+        // Apply aesthetic class to document
+        const applyAesthetic = (newAesthetic: string) => {
+            document.documentElement.classList.remove("modern", "retro");
+            document.documentElement.classList.add(newAesthetic);
+            localStorage.setItem("aesthetic", newAesthetic);
+        };
+
+        // Initialize
+        applyAesthetic(aesthetic);
+        initializeUI();
+
+        // Toggle handler
+        aestheticPicker.addEventListener("click", () => {
+            const newAesthetic = aesthetic === "modern" ? "retro" : "modern";
+            
+            // Update state
+            aesthetic = newAesthetic;
+            applyAesthetic(newAesthetic);
+
+            // Animate toggle
+            if (newAesthetic === "retro") {
+                gsap.to(aestheticSlider, {
+                    duration: 0.3,
+                    x: "28px",
+                    ease: "back.out(1.7)"
+                });
+                aestheticLabel.textContent = "Retro";
+            } else {
+                gsap.to(aestheticSlider, {
+                    duration: 0.3,
+                    x: "0px",
+                    ease: "back.out(1.7)"
+                });
+                aestheticLabel.textContent = "Modern";
+            }
+        });
+    }
+</script>
+

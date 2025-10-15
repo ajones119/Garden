@@ -5,8 +5,10 @@ import { createContext, createSignal, type Accessor, type JSX } from "solid-js";
 
 import { BlackAndWhiteFilter, PixelateFilter, BlurFilter, BaseFilter, SepiaFilter } from "./filters";
 import FloatImage from "../../../assets/demoImages/mainCardImages/float-image.png";
+import { DitherFilter } from "./filters/dither";
 
 type RendererStrategy = "canvas" | "ascii";
+type AsciiCharSet = "standard" | "esoteric";
 
 const ImageFilterinatorContext = createContext<{
     filters: Accessor<BaseFilter[]>;
@@ -19,6 +21,8 @@ const ImageFilterinatorContext = createContext<{
     setRendererStrategy: (strategy: RendererStrategy) => void;
     density: Accessor<number>;
     setDensity: (density: number) => void;
+    asciiCharSet: Accessor<AsciiCharSet>;
+    setAsciiCharSet: (charSet: AsciiCharSet) => void;
 }>({
     filters: () => [],
     toggleFilter: () => {},
@@ -29,12 +33,15 @@ const ImageFilterinatorContext = createContext<{
     rendererStrategy: () => "canvas" as RendererStrategy,
     setRendererStrategy: () => {},
     density: () => 1,
-    setDensity: () => {}
+    setDensity: () => {},
+    asciiCharSet: () => "standard" as AsciiCharSet,
+    setAsciiCharSet: () => {}
 })
 
 const ImageFilterinatorProvider = (props: {children: JSX.Element}) => {
     const [img, setImg] = createSignal<ImageMetadata | null>({src: FloatImage.src, width: FloatImage.width, height: FloatImage.height, format: FloatImage.format});
     const [density, setDensity] = createSignal(1);
+    const [asciiCharSet, setAsciiCharSet] = createSignal<AsciiCharSet>("standard");
     const [filters, setFilters] = createSignal<BaseFilter[]>([
         new PixelateFilter({
             name: "Pixelate",
@@ -58,6 +65,13 @@ const ImageFilterinatorProvider = (props: {children: JSX.Element}) => {
             description: "Sepia the image",
             active: false,
             intensity: 1
+        }),
+        new DitherFilter({
+            name: "Dither",
+            description: "Dither the image",
+            active: false,
+            intensity: 1,
+            colorDepth: 2
         }),
     ]);
     const [rendererStrategy, setRendererStrategy] = createSignal<"canvas" | "ascii">("canvas");
@@ -92,7 +106,7 @@ const ImageFilterinatorProvider = (props: {children: JSX.Element}) => {
     }
 
     return (
-        <ImageFilterinatorContext.Provider value={{filters, toggleFilter, updateFilterParam, reorderFilters, img, setImg, rendererStrategy, setRendererStrategy, density, setDensity}}>
+        <ImageFilterinatorContext.Provider value={{filters, toggleFilter, updateFilterParam, reorderFilters, img, setImg, rendererStrategy, setRendererStrategy, density, setDensity, asciiCharSet, setAsciiCharSet}}>
             {props.children}
         </ImageFilterinatorContext.Provider>
     )

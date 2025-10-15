@@ -3,24 +3,45 @@ import type { Color } from "../types";
 import { $gradient, addColor, changeColor, removeColor } from "../nanoStore";
 import BasicButton from "../../../../components/React/Buttons/BasicButton";
 import { useStore } from "@nanostores/react";
+import ColorPicker from "../../../../components/React/Inputs/ColorPicker";
+import NumberInput from "../../../../components/React/Inputs/NumberInput";
 
 const ColorRow = ({color, index}: {color: Color, index: number}) => {
     return (
-        <div className="p-2 border-b border-border flex flex-col gap-2 relative max-w-full">
-            <div className="flex items-center gap-2">
-                <label className="text-foreground text-md cursor-pointer" htmlFor={`color-input-${index}`}>Color</label>
-                <input className="cursor-pointer" id={`color-input-${index}`} type="color" value={color.color} onChange={(e) => changeColor(index, {...color, color: e?.target?.value})} />
-            </div>
-            <div className="flex items-center gap-2">
-                <label className="text-foreground text-md cursor-pointer" htmlFor={`first-pos-input-${index}`}>First Positional Argument</label>
-                <input className="shrink cursor-pointer border-border border rounded-md px-1" id={`first-pos-input-${index}`} type="number" value={color?.firstPositionArg} onChange={(e) => changeColor(index, {...color, firstPositionArg: Number(e?.target?.value) || undefined})} />
-            </div>
-            <div className="flex items-center gap-2">
-                <label className="text-foreground text-md cursor-pointer" htmlFor={`Second-pos-input-${index}`}>Second Positional Argument</label>
-                <input className="shrink cursor-pointer border-border border rounded-md px-1" id={`Second-pos-input-${index}`} type="number" value={color?.secondPositionArg} onChange={(e) => changeColor(index, {...color, secondPositionArg: Number(e?.target?.value) || undefined})} />
-            </div>
-            <div className="absolute top-1 right-1">
-                <button onClick={() => removeColor(index)} className="border-none text-foreground bg-red-400 cursor-pointer rounded-md text-sm px-2">remove</button>
+        <div className="p-4 border-b border-border flex flex-col gap-3 relative">
+            <ColorPicker
+                id={`color-input-${index}`}
+                label="Color"
+                value={color.color}
+                onChange={(value) => changeColor(index, {...color, color: value})}
+            />
+            
+            <NumberInput
+                id={`first-pos-input-${index}`}
+                label="First Position"
+                value={color?.firstPositionArg || 0}
+                min={0}
+                max={100}
+                onChange={(value) => changeColor(index, {...color, firstPositionArg: value || undefined})}
+            />
+            
+            <NumberInput
+                id={`second-pos-input-${index}`}
+                label="Second Position"
+                value={color?.secondPositionArg || 0}
+                min={0}
+                max={100}
+                onChange={(value) => changeColor(index, {...color, secondPositionArg: value || undefined})}
+            />
+            
+            <div className="absolute top-2 right-2">
+                <BasicButton 
+                    onClick={() => removeColor(index)} 
+                    variant="ghost"
+                    className="!p-2 !text-xs"
+                >
+                    ✕
+                </BasicButton>
             </div>
         </div>
     );
@@ -29,11 +50,17 @@ const ColorRow = ({color, index}: {color: Color, index: number}) => {
 const ColorsList = () => {
     const colors = useStore($gradient).colors
     return (
-        <div>
-            {
-                colors.map((color, index) => <ColorRow color={color} index={index} key={`color-${index}`} />)
-            }
-            <BasicButton onClick={() => addColor({color: "#ffffff"})}>+ Add Color</BasicButton>
+        <div className="flex flex-col h-full">
+            <div className="flex-1 overflow-y-auto">
+                {
+                    colors.map((color, index) => <ColorRow color={color} index={index} key={`color-${index}`} />)
+                }
+            </div>
+            <div className="p-4 border-t border-border">
+                <BasicButton onClick={() => addColor({color: "#ffffff"})} className="w-full">
+                    + Add Color
+                </BasicButton>
+            </div>
         </div>
     )
 }

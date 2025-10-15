@@ -11,16 +11,20 @@ import {
   import { ImageFilterinatorContext } from "../../ImageFilterinatorContext.solid";
 import { BlackAndWhiteFilter } from "../../filters";
   
-  const ASCII_CHARS = " .-:=+*#%@$";
+  const ASCII_CHARS_STANDARD = " .-:=+*#%@$";
+  const ASCII_CHARS_ESOTERIC = " ░▒▓█▀▄■▪●◘◙☺☻♠♣♥♦";
+
   
   export const ImageFilterAscii = () => {
     let canvas: HTMLCanvasElement | undefined;
-    const { img: imgAccessor, filters, density: densityAccessor } = useContext(ImageFilterinatorContext);
+    const { img: imgAccessor, filters, density: densityAccessor, asciiCharSet } = useContext(ImageFilterinatorContext);
     
     createEffect(() => {
       const imageData = imgAccessor?.();
       const currentFilters = filters(); // MUST read signal HERE, not in callback!
       const density = densityAccessor();
+      const charSet = asciiCharSet();
+      const ASCII_CHARS = charSet === "esoteric" ? ASCII_CHARS_ESOTERIC : ASCII_CHARS_STANDARD;
   
       if (!canvas || !imageData) return;
   

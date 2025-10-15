@@ -8,12 +8,12 @@ import Slider from "../../../../components/Solid/Slider/Slider.solid";
 import BasicButtonSolid from "../../../../components/Solid/Buttons/BasicButton.solid";
 
 export function Settings() {
-    const { filters, toggleFilter, updateFilterParam, reorderFilters, setRendererStrategy, rendererStrategy, density, setDensity, setImg } = useContext(ImageFilterinatorContext);
+    const { filters, toggleFilter, updateFilterParam, reorderFilters, setRendererStrategy, rendererStrategy, density, setDensity, setImg, asciiCharSet, setAsciiCharSet } = useContext(ImageFilterinatorContext);
     const [draggedIndex, setDraggedIndex] = createSignal<number | null>(null);
     const [dragOverIndex, setDragOverIndex] = createSignal<number | null>(null);
     
     return (
-        <div class="p-4">
+        <div class="p-4 overflow-y-auto h-full flex flex-col gap-4">
             <section id="filters">
                 <h1 class="text-xl font-bold mb-4">Filters</h1>
                 <div class="flex flex-col gap-4">
@@ -92,43 +92,62 @@ export function Settings() {
                     <RadioButtons id="rendererStrategy" name="rendererStrategy" options={[{label: "Canvas", value: "canvas"}, {label: "ASCII", value: "ascii"}]} selected={rendererStrategy()} onChange={(value) => setRendererStrategy(value as "canvas" | "ascii")} />
                 </div>
             </section>
-            <section>
-                <h1 class="text-xl font-bold mb-4">Density</h1>
-                <div class="flex flex-col gap-4">
-                    <Slider id="density" name="density" value={density()} onChange={(value) => setDensity(value)} unit="x" min={0.1} max={2} step={0.1} />
-                </div>
-            </section>
-
-            <BasicButtonSolid onClick={() => {
-                setDensity(1);
-                setRendererStrategy("canvas");
-                setImg(null);
-            }}>Clear Image</BasicButtonSolid>
-            <Show
-                when={rendererStrategy() === "ascii"}
-                fallback={<BasicButtonSolid onClick={() => {
-                    const canvas = document.querySelector("#editCanvas") as HTMLCanvasElement;
-                    if (canvas) {
-                        canvas.toBlob((blob) => {
-                            if (blob) {
-                                const url = URL.createObjectURL(blob);
-                                const a = document.createElement("a");
-                                a.href = url;
-                                const date = new Date().toISOString().split("T")[0];
-                                a.download = `${date}-filterinator.png`;
-                                a.click();
-                            }
-                        });
-                    }
-                }}>Download PNG</BasicButtonSolid>}
-            >
-                <BasicButtonSolid onClick={() => {
-                    const asciiCanvas = document.querySelector("#asciiCanvas") as HTMLPreElement;
-                    if (asciiCanvas) {
-                        navigator.clipboard.writeText(asciiCanvas.textContent || "");
-                    }
-                }}>Copy Ascii</BasicButtonSolid>
+            <Show when={rendererStrategy() === "ascii"}>
+                <section>
+                    <h1 class="text-xl font-bold mb-4">ASCII Character Set</h1>
+                    <div class="flex flex-col gap-4">
+                        <RadioButtons 
+                            id="asciiCharSet" 
+                            name="asciiCharSet" 
+                            options={[
+                                {label: "Standard", value: "standard"}, 
+                                {label: "Esoteric", value: "esoteric"}
+                            ]} 
+                            selected={asciiCharSet()} 
+                            onChange={(value) => setAsciiCharSet(value as "standard" | "esoteric")} 
+                        />
+                    </div>
+                </section>
+                <section>
+                    <h1 class="text-xl font-bold mb-4">Density</h1>
+                    <div class="flex flex-col gap-4">
+                        <Slider id="density" name="density" value={density()} onChange={(value) => setDensity(value)} unit="x" min={0.1} max={2} step={0.1} />
+                    </div>
+                </section>
             </Show>
+
+            <div class="space-y-4">
+                <BasicButtonSolid onClick={() => {
+                    setDensity(1);
+                    setRendererStrategy("canvas");
+                    setImg(null);
+                }}>Clear Image</BasicButtonSolid>
+                <Show
+                    when={rendererStrategy() === "ascii"}
+                    fallback={<BasicButtonSolid onClick={() => {
+                        const canvas = document.querySelector("#editCanvas") as HTMLCanvasElement;
+                        if (canvas) {
+                            canvas.toBlob((blob) => {
+                                if (blob) {
+                                    const url = URL.createObjectURL(blob);
+                                    const a = document.createElement("a");
+                                    a.href = url;
+                                    const date = new Date().toISOString().split("T")[0];
+                                    a.download = `${date}-filterinator.png`;
+                                    a.click();
+                                }
+                            });
+                        }
+                    }}>Download PNG</BasicButtonSolid>}
+                >
+                    <BasicButtonSolid onClick={() => {
+                        const asciiCanvas = document.querySelector("#asciiCanvas") as HTMLPreElement;
+                        if (asciiCanvas) {
+                            navigator.clipboard.writeText(asciiCanvas.textContent || "");
+                        }
+                    }}>Copy Ascii</BasicButtonSolid>
+                </Show>
+            </div>
         </div>
     );
 }

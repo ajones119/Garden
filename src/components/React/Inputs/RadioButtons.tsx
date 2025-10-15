@@ -22,24 +22,117 @@ const RadioButtons = <T,>({
   className = "",
 }: RadioButtonsProps<T>) => {
   return (
-    <div className={`flex flex-col gap-2 ${className}`}>
-      {options.map((opt) => (
-        <label
-          key={String(opt.value)}
-          className="flex items-center gap-2 cursor-pointer"
-        >
-          <input
-            type="radio"
-            name={name}
-            value={String(opt.value)}
-            checked={opt.value === selected}
-            onChange={() => onChange(opt.value)}
-            className="w-4 h-4 text-blue-600 bg-white border-gray-300 focus:ring-2 focus:ring-blue-500"
-          />
-          <span className="text-sm">{opt.label}</span>
-        </label>
-      ))}
-    </div>
+    <>
+      <div className={`modern-radio-group ${className}`}>
+        {options.map((opt) => (
+          <label
+            key={String(opt.value)}
+            className="modern-radio-label"
+          >
+            <input
+              type="radio"
+              name={name}
+              value={String(opt.value)}
+              checked={opt.value === selected}
+              onChange={() => onChange(opt.value)}
+              className="modern-radio-input"
+            />
+            <span className="modern-radio-custom"></span>
+            <span className="modern-radio-text">{opt.label}</span>
+          </label>
+        ))}
+      </div>
+
+      <style>{`
+        .modern-radio-group {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .modern-radio-label {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.75rem;
+          cursor: pointer;
+          position: relative;
+          user-select: none;
+          transition: all var(--transition-speed) ease;
+        }
+
+        .modern-radio-label:hover .modern-radio-custom {
+          border-color: var(--color-primary);
+          box-shadow: var(--radio-shadow-hover);
+        }
+
+        /* Hide default radio */
+        .modern-radio-input {
+          position: absolute;
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        /* Custom radio button */
+        .modern-radio-custom {
+          position: relative;
+          width: var(--radio-size);
+          height: var(--radio-size);
+          border: var(--radio-border-width) solid var(--color-border);
+          border-radius: var(--radio-border-radius);
+          background: var(--color-background);
+          transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: var(--radio-shadow);
+          flex-shrink: 0;
+        }
+
+        /* Radio dot (when checked) */
+        .modern-radio-custom::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) scale(0);
+          width: var(--radio-dot-size);
+          height: var(--radio-dot-size);
+          border-radius: var(--radio-border-radius);
+          background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+          transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Checked state */
+        .modern-radio-input:checked + .modern-radio-custom {
+          border-color: var(--color-primary);
+          background: var(--color-muted);
+        }
+
+        .modern-radio-input:checked + .modern-radio-custom::after {
+          transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Focus state */
+        .modern-radio-input:focus + .modern-radio-custom {
+          box-shadow: var(--radio-shadow-focus);
+        }
+
+        /* Active state */
+        .modern-radio-label:active .modern-radio-custom {
+          transform: scale(0.95);
+        }
+
+        /* Label text */
+        .modern-radio-text {
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: var(--color-foreground);
+          transition: color var(--transition-speed) ease;
+        }
+
+        .modern-radio-input:checked ~ .modern-radio-text {
+          color: var(--color-primary);
+          font-weight: 600;
+        }
+      `}</style>
+    </>
   );
 };
 

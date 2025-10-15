@@ -1,5 +1,6 @@
 ---
 import ThemeToggle from "./Inputs/ThemeToggle.astro";
+import AestheticToggle from "./Inputs/AestheticToggle.astro";
 import LOGO from "../../assets/logo.png"
 import Image from "astro/components/Image.astro";
 
@@ -19,10 +20,13 @@ const {contentContainerId = ""} = Astro.props;
                 height={56}
             />
         </a>
-        <ul class="space-x-4 hidden md:flex">
-            <li><ThemeToggle /></li>
+        <ul class="space-x-4 hidden md:flex items-center">
             <li><a href="/demos" class="text-foreground hover:text-gray-300">Demos</a></li>
             <li><a href="/projects" class="text-foreground hover:text-gray-300">Projects</a></li>
+            <li class="flex items-center gap-3">
+                <ThemeToggle />
+                <AestheticToggle />
+            </li>
         </ul>
         <button id="menuToggle" class="text-foreground md:hidden hover:scale-110 focus:outline-none transition-all duration-100">
         <!-- MAKE SVG ANIMATION TO X BUTTON WITH GSAP -->
@@ -33,15 +37,22 @@ const {contentContainerId = ""} = Astro.props;
     </div>
     <div id="mobile-nav-container" class="hidden fixed top-[48px] left-0 w-dvw h-dvh z-50 backdrop-blur-xs md:hidden">
         <div id="mobile-nav-menu" class="fixed bg-muted w-8/12 xs:w-6/12 sm:w-4-12 h-full overflow-hidden ">
-            <ul class="p-4">
+            <ul class="p-4 space-y-4">
                 <li class="text-muted-foreground transition-colors hover:text-foreground hover:underline">
                     <a href="/">Home</a>
                 </li>
                 <li class="text-muted-foreground transition-colors hover:text-foreground hover:underline">
-                <a href="/demos">Demos</a>
+                    <a href="/demos">Demos</a>
                 </li>
-                    <li class="text-muted-foreground transition-colors hover:text-foreground hover:underline">
+                <li class="text-muted-foreground transition-colors hover:text-foreground hover:underline">
                     <a href="/projects">Projects</a>
+                </li>
+                <li class="pt-4 border-t border-border">
+                    <div class="flex flex-col gap-3">
+                        <ThemeToggle />
+                        <AestheticToggle />
+                    </div>
+                </li>
             </ul>
         </div>
         

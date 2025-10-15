@@ -1,0 +1,42 @@
+---
+const {
+  id = "trading-card",
+  layers = [],
+  backImage
+} = Astro.props as {
+  id?: string,
+  layers: { image: string }[],
+  backImage?: string
+};
+---
+
+<div class="card group w-80 aspect-[3/4] cursor-grab perspective-[1000px]" id={id}>
+  <div class="card-inner relative size-full transition-transform duration-700 [transform-style:preserve-3d] group-[.flipped]:[transform:rotateY(180deg)]">
+    
+    <!-- Front -->
+    <div class="card-front absolute inset-0 [backface-visibility:hidden] overflow-hidden rounded-xl shadow-xl">
+      {layers.map((layer, i) => (
+        <div
+          class="absolute inset-0 bg-cover will-change-transform"
+          style={`background-image:url('${layer.image}'); transform:translateZ(${i * 10}px)`}
+        />
+      ))}
+    </div>
+
+    <!-- Back -->
+    <div
+      class="card-back absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden rounded-xl shadow-xl"
+      style={`background-image:url('${backImage}'); background-size:cover;`}
+    />
+  </div>
+</div>
+
+<script define:vars={{id}}>
+    const el = document.getElementById(id);
+    if (el) {
+        el.addEventListener("click", () => {
+            console.log("flip")
+            el.classList.toggle("flipped");
+        });
+    }
+</script>

@@ -3,10 +3,16 @@ import Layout from "../../layouts/Layout.astro";
 
 import BaseDemoLayout from "../../layouts/demo/BaseDemoLayout.astro";
 import type { BaseDemoLayoutProps } from "./types";
-import CodeBlock from "../../components/Astro/CodeBlock.astro";
 import DemoSubsection from "../../layouts/demo/DemoSubsection.astro";
-import BasicButton from "../../components/Astro/Buttons/BasicButton.astro";
-import TiltContainer from "../../components/Astro/PerspectiveContainers/TiltContainer.astro";
+import BaseTradingCard from "../../components/Astro/Cards/baseTradingCard.astro";
+import HeroTradingCard from "../../components/Astro/Cards/heroTradingCard.astro";
+
+import castle from "../../assets/mainlayers/castle.png"
+import midground from "../../assets/mainlayers/midground.png"
+import foreground from "../../assets/mainlayers/foreground.png"
+import background from "../../assets/mainlayers/background.png"
+import temp from "../../assets/mainlayers/temp.png"
+
 
 const base: BaseDemoLayoutProps = {
 		dateAdded: "08/10/2025",
@@ -14,22 +20,32 @@ const base: BaseDemoLayoutProps = {
 		topics: ["SVG", "Filters", "Displacement"],
 		sections: [
 			{ id: "intro", title: "Introduction" },
-			{ id: "carousel", title: "Carousel" },
-			{ id: "scramble-text", title: "Scramble Text" },
 		]
 	};
-
-const carouselList: number[] = [];
-
-for(let i = 0; i < 20; i++) {
-	carouselList.push(i)
-}
 ---
 
 <Layout hasNavbar>
     <BaseDemoLayout {...base}>
-		<DemoSubsection id="carousel" title="Carousel">
-           
+		<DemoSubsection id="card" title="2d to 3d Trading Card">
+			<HeroTradingCard id="test" layers={[
+					{image: background.src},
+					{image: castle.src, hoverClasses: [""]},
+					{image: midground.src, hoverClasses: []},
+					{image: foreground.src, hoverClasses: []}
+				]}
+				heroLayers={[
+					{image: temp.src, hoverClasses: []}
+				]}
+			/>
+			<BaseTradingCard id="test2" layers={[
+					{image: background.src},
+					{image: castle.src, hoverClasses: [""]},
+					{image: midground.src, hoverClasses: []},
+					{image: foreground.src, hoverClasses: []}
+				]}
+				
+			/>
+			
         </DemoSubsection>
     </BaseDemoLayout>
 </Layout>

@@ -1,0 +1,54 @@
+---
+const {
+  id = "trading-card",
+  layers = [],
+  heroLayers = [],
+  backImage
+} = Astro.props as {
+  id?: string,
+  layers: { image: string }[],
+  heroLayers: { image: string }[],
+  backImage?: string
+};
+---
+
+<div class="card group w-80 aspect-[3/4] cursor-grab perspective-[1000px] transition-all duration-100" id={id}>
+  <div class="card-inner relative size-full transition-transform duration-700 group-hover:[transform:rotateY(15deg)_rotateX(10deg)] [transform-style:preserve-3d] group-[.flipped]:[transform:rotateY(180deg)]">
+    
+    <!-- Front -->
+    <div class="card-front preserve-3d absolute inset-0 [backface-visibility:hidden] rounded-xl shadow-xl">
+      {layers.map((layer, i) => (
+        <div
+          class="absolute inset-0 bg-cover will-change-transform preserve-3d"
+          style={`background-image:url('${layer.image}'); transform:translateZ(${i * 10}px)`}
+        />
+      ))}
+        {heroLayers.map((layer, i) => (
+          <div
+            class="absolute bg-gradient-to-b inset-0 bg-cover will-change-transform transition-all duration-500 opacity-0 group-hover:opacity-100 [transform:translateZ(50px)_rotateX(0deg)] group-hover:[transform:translateZ(90px)_rotateX(-20deg)]  preserve-3d"
+            style={`
+              background-image: linear-gradient(to top, rgba(255,255,255, 0), rgba(255,255,255,0) 10%), url('${layer.image}');
+              background-size: cover;
+              background-position: center;
+            `}
+          />
+        ))}
+    </div>
+
+    <!-- Back -->
+    <div
+      class="card-back absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden rounded-xl shadow-xl"
+      style={`background-image:url('${backImage}'); background-size:cover;`}
+    />
+  </div>
+</div>
+
+<script define:vars={{id}}>
+    const el = document.getElementById(id);
+    if (el) {
+        el.addEventListener("click", () => {
+            console.log("flip")
+            el.classList.toggle("flipped");
+        });
+    }
+</script>

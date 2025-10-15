@@ -1,0 +1,251 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+import BaseDemoLayout from "../../layouts/demo/BaseDemoLayout.astro";
+import type { BaseDemoLayoutProps } from "./types";
+import CodeBlock from "../../components/Astro/CodeBlock.astro";
+import DemoSubsection from "../../layouts/demo/DemoSubsection.astro";
+import BasicButton from "../../components/Astro/Buttons/BasicButton.astro";
+
+const base: BaseDemoLayoutProps = {
+		dateAdded: "08/15/2025",
+		title: "Gradients",
+		topics: ["CSS", 'gradients'],
+		sections: [
+			{ id: "intro", title: "Introduction" },
+            { id: "linear", title: "Linear Gradient" },
+            { id: "radial", title: "Radial Gradient" },
+            { id: "conic", title: "Conic Gradient" }
+		]
+	};
+
+const carouselList: number[] = [];
+
+for(let i = 0; i < 20; i++) {
+	carouselList.push(i)
+}
+---
+
+<Layout hasNavbar>
+    <BaseDemoLayout {...base}>
+		<DemoSubsection id="linear" title="Linear Gradient">
+            <p class="my-4">The <span class="text-accent">linear-gradient()</span> function generates a background that progressively changes from one to more colors. It takes multiple arguments, and just passing the colors will split them evenly.</p>
+            <div class="flex gap-2">
+                <CodeBlock>
+{`
+.class {
+  background: linear-gradient(blue, DeepPink, green);
+}
+`}
+                </CodeBlock>
+                <div class="my-4 mx-auto w-4/12 aspect-square linear-one rounded-lg shrink">
+
+                </div>
+                <style>
+                    .linear-one {
+                        background: linear-gradient(blue, DeepPink, purple)
+                    }
+                </style>
+            </div>
+
+            <p class="my-4">You can also use angle keywords such as left, right, top, bottom to dictate the angle of the gradient. If you use the keywords, you can specify in the first argument after the 'to' keyword. </p>
+            <div class="flex gap-2 flex-row-reverse">
+                <CodeBlock>
+{`
+.linear-top {
+    background: linear-gradient(to top, blue, DeepPink)
+}
+.linear-right {
+    background: linear-gradient(to right, blue, DeepPink)
+}
+.linear-left {
+    background: linear-gradient(to left, blue, DeepPink)
+}
+.linear-top-right {
+   background: linear-gradient(to top right, blue, DeepPink)
+}
+`}
+                </CodeBlock>
+                <div class="my-4 mx-auto w-4/12 aspect-square rounded-lg shrink grid grid-cols-2 gap-2">
+                    <div class="w-full linear-top" />
+                    <div class="w-full linear-right" />
+                    <div class="w-full linear-left" />
+                    <div class="w-full linear-top-right" />
+
+                </div>
+                <style>
+                    .linear-top {
+                        background: linear-gradient(to top, blue, DeepPink)
+                    }
+                    .linear-right {
+                        background: linear-gradient(to right, blue, DeepPink)
+                    }
+                    .linear-left {
+                        background: linear-gradient(to left, blue, DeepPink)
+                    }
+                    .linear-top-right {
+                        background: linear-gradient(to top right, blue, DeepPink)
+                    }
+                </style>
+            </div>
+
+        <p class="mt-4">You can also pass an actual angle such as <span class="text-accent">45deg</span> and define a more specific angle to the gradient.</p>
+        <p class="mb-4">Another option is to supply a color stop value. This value will determine the position of the color.</p>
+            <div class="flex gap-2">
+                <CodeBlock>
+{`
+.linear-specific-angle {
+    background: linear-gradient(60deg, blue 5%, DeepPink)
+
+}
+.linear-specific-angle-more {
+    background: linear-gradient(60deg, blue 50%, DeepPink)
+
+}
+`}
+                </CodeBlock>
+                <div class="my-4 mx-auto w-4/12 aspect-square rounded-lg shrink grid grid-cols-2 gap-2">
+                    <div class="w-full linear-specific-angle" />
+                    <div class="w-full linear-specific-angle-more" />
+
+                </div>
+                <style>
+                    .linear-specific-angle {
+                        background: linear-gradient(60deg, blue 5%, DeepPink)
+                    }
+                    .linear-specific-angle-more {
+                        background: linear-gradient(60deg, blue 50%, DeepPink)
+                    }
+                </style>
+            </div>
+                        <p class="my-4">You can ultimately pass as many colors and positions as you want!</p>
+            <div class="flex gap-2 flex-row-reverse">
+                <CodeBlock>
+{`
+.linear-complex {
+    background: linear-gradient(75deg, darkred 20%, 
+        crimson, darkorange 60%, gold, bisque)
+}
+`}
+                </CodeBlock>
+                <div class="my-4 mx-auto w-4/12 aspect-square rounded-lg shrink grid grid-cols-1 gap-2">
+                    <div class="w-full linear-complex rounded-lg" />
+
+                </div>
+                <style>
+                    .linear-complex {
+                        background: linear-gradient(75deg, darkred 20%, crimson, darkorange 60%, gold, bisque)
+                    }
+                </style>
+            </div>
+
+        </DemoSubsection>
+        <DemoSubsection id="radial" title="Radial Gradient">
+            <p class="my-4">To create a gradient that radiates in a circular area, you can use <span class="text-accent">radial-gradient()</span>. It's similar to <span class="text-accent">linear-gradient()</span>, but instead of identifying angles, you will set positions and ending shape. placing no positions will center the gradient in the box.</p>
+            <div class="flex gap-2 flex-row-reverse">
+                <CodeBlock>
+{`
+.radial-base {
+    background: radial-gradient(blue, DeepPink)
+}
+.radial-percent {
+    background: radial-gradient(blue 30%, DeepPink 60%)
+}
+.radial-corner {
+    background: radial-gradient(closest-corner, blue, DeepPink)
+}
+.radial-side {
+    background: radial-gradient(closest-side, blue, DeepPink)
+}
+`}
+                </CodeBlock>
+                <div class="my-4 mx-auto w-4/12 aspect-square rounded-lg shrink grid grid-cols-2 gap-2">
+                    <div class="w-full radial-base" />
+                    <div class="w-full radial-percent" />
+                    <div class="w-full radial-corner" />
+                    <div class="w-full radial-side" />
+
+                </div>
+                <style>
+                    .radial-base {
+                        background: radial-gradient(blue, DeepPink)
+                    }
+                    .radial-percent {
+                        background: radial-gradient(blue 30%, DeepPink 60%)
+                    }
+                    .radial-corner {
+                        background: radial-gradient(closest-corner, blue, DeepPink)
+                    }
+                    .radial-side {
+                        background: radial-gradient(closest-side, blue, DeepPink)
+                    }
+                </style>
+            </div>
+        </DemoSubsection>
+        <DemoSubsection id="conic" title="Conic Gradient">
+            <p class="my-4">To create a gradient that has a center point and circles around in a 360 degree area, you can use <span class="text-accent">conic-gradient()</span>. It accepts a position and angle argument for each color, by default the angle is 0 degrees and the position is centered.</p>
+            <div class="flex gap-2 flex-row-reverse">
+                <CodeBlock>
+{`
+.conic-base {
+    background: conic-gradient(blue, DeepPink)
+}
+.conic-percent {
+    background: conic-gradient(blue 30%, DeepPink 60%)
+}
+.conic-corner {
+    background: conic-gradient(from 10deg at 20% 30%, blue, DeepPink)
+}
+.conic-side {
+    background: conic-gradient(from 60deg at 70% 70%, blue, DeepPink)
+}
+`}
+                </CodeBlock>
+                <div class="my-4 mx-auto w-4/12 aspect-square rounded-lg shrink grid grid-cols-2 gap-2">
+                    <div class="w-full conic-base" />
+                    <div class="w-full conic-percent" />
+                    <div class="w-full conic-corner" />
+                    <div class="w-full conic-side" />
+
+                </div>
+                <style>
+                    .conic-base {
+                        background: conic-gradient(blue, DeepPink)
+                    }
+                    .conic-percent {
+                        background: conic-gradient(blue 30%, DeepPink 60%)
+                    }
+                    .conic-corner {
+                        background: conic-gradient(from 10deg at 20% 30%, blue, DeepPink)
+                    }
+                    .conic-side {
+                        background: conic-gradient(from 60deg at 70% 70%, blue, DeepPink)
+                    }
+                </style>
+            </div>
+            <p class="my-4">You can also supply positional arguments for specific colors and get a pie chart like effect.</p>
+            <div class="flex gap-2 flex-row-reverse">
+                <CodeBlock>
+{`
+.conic-complex {
+    background: conic-gradient(
+    gold 20deg, lightcoral 20deg 190deg, mediumturquoise 190deg 220deg,
+    plum 220deg 320deg, steelblue 320deg);
+}
+`}
+                </CodeBlock>
+                <div class="my-4 mx-auto w-4/12 aspect-square rounded-lg shrink grid grid-cols-1 gap-2">
+                    <div class="w-full conic-complex rounded-full" />
+
+                </div>
+                <style>
+                    .conic-complex {
+                        background: conic-gradient(
+                        gold 20deg, lightcoral 20deg 190deg, mediumturquoise 190deg 220deg, plum 220deg 320deg, steelblue 320deg);
+                    }
+                </style>
+            </div>
+        </DemoSubsection>
+
+    </BaseDemoLayout>
+</Layout>

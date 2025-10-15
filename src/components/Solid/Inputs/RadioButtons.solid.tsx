@@ -1,4 +1,6 @@
-import React from "react";
+/** @jsxImportSource solid-js */
+
+import { For, type Component } from "solid-js";
 
 export type Option<T> = {
   label: string;
@@ -11,36 +13,29 @@ type RadioButtonsProps<T> = {
   options: Option<T>[];
   selected: T;
   onChange: (value: T) => void;
-  className?: "";
+  className?: string;
 };
 
-const RadioButtons = <T,>({
-  name,
-  options,
-  selected,
-  onChange,
-  className = "",
-}: RadioButtonsProps<T>) => {
+const RadioButtons = <T,>(props: RadioButtonsProps<T>) => {
   return (
     <>
-      <div className={`modern-radio-group ${className}`}>
-        {options.map((opt) => (
-          <label
-            key={String(opt.value)}
-            className="modern-radio-label"
-          >
-            <input
-              type="radio"
-              name={name}
-              value={String(opt.value)}
-              checked={opt.value === selected}
-              onChange={() => onChange(opt.value)}
-              className="modern-radio-input"
-            />
-            <span className="modern-radio-custom"></span>
-            <span className="modern-radio-text">{opt.label}</span>
-          </label>
-        ))}
+      <div class={`modern-radio-group ${props.className || ""}`}>
+        <For each={props.options}>
+          {(opt) => (
+            <label class="modern-radio-label">
+              <input
+                type="radio"
+                name={props.name}
+                value={String(opt.value)}
+                checked={opt.value === props.selected}
+                onChange={() => props.onChange(opt.value)}
+                class="modern-radio-input"
+              />
+              <span class="modern-radio-custom"></span>
+              <span class="modern-radio-text">{opt.label}</span>
+            </label>
+          )}
+        </For>
       </div>
 
       <style>{`
@@ -137,3 +132,4 @@ const RadioButtons = <T,>({
 };
 
 export default RadioButtons;
+

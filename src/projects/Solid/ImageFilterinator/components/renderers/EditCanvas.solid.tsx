@@ -6,40 +6,18 @@ import {
   createSignal,
   createEffect,
   type Accessor,
+  useContext,
 } from "solid-js";
+import { ImageFilterinatorContext } from "../../ImageFilterinatorContext.solid";
 
-type Props = {
-  pixelSize: Accessor<number>;
-  img: ImageMetadata;
-};
 
-export function PixelateCanvas(
-  ctx: CanvasRenderingContext2D,
-  pixelSize: number,
-  height: number,
-  width: number,
-) {
-  const { data } = ctx.getImageData(0, 0, width, height);
-  for (let y = 0; y < height; y += pixelSize) {
-    for (let x = 0; x < width; x += pixelSize) {
-      const index = (y * width + x) * 4;
-      const r = data[index];
-      const g = data[index + 1];
-      const b = data[index + 2];
-      const a = data[index + 3];
-      ctx.fillStyle = `rgb(${r}, ${g}, ${b}, ${a})`;
-      ctx.fillRect(x, y, pixelSize, pixelSize);
-    }
-  }
-}
-
-export const PixelatorCanvas = (props: Props) => {
+export const ImageFilterCanvas = () => {
   let canvas: HTMLCanvasElement | undefined;
-
+  const { img: imgAccessor, filters } = useContext(ImageFilterinatorContext);
+  
   createEffect(() => {
-    const pixelSize = props.pixelSize();
-    const imageData = props.img;
-
+    const imageData = imgAccessor?.();
+    const currentFilters = filters(); // MUST read signal HERE, not in callback!
     if (!canvas || !imageData) return;
 
     const ctx = canvas.getContext("2d");
@@ -73,9 +51,15 @@ export const PixelatorCanvas = (props: Props) => {
 
       ctx.drawImage(img, xOffset, yOffset, width, height);
 
-      PixelateCanvas(ctx, pixelSize, maxHeight, maxWidth);
+      // Use currentFilters captured BEFORE the async boundary
+      currentFilters.forEach(filter => {
+        if (filter.active) {
+          console.log("Applying filter:", filter.name);
+          filter.process({ctx});
+        }
+      });
     };
   });
 
-  return <canvas ref={canvas} class="w-full h-full" />;
+  return <canvas id="editCanvas" ref={canvas} class="w-full h-full" />;
 };

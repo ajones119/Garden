@@ -74,6 +74,58 @@
 
   --shadow-pixel: "0 0 0 4px red, 4px 4px 0 0 red";
   --navbar-height: 3rem; /* consistent navbar height */
+  
+  /* Modern aesthetic (default) */
+  --button-radius: 0.75rem; /* 12px - smooth, modern corners */
+  --button-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --button-shadow-hover: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --button-transform-hover: translateY(-2px);
+  --transition-speed: 200ms;
+  --font-body: system-ui, -apple-system, sans-serif;
+  
+  /* Slider variables - Modern */
+  --slider-track-radius: 9999px; /* fully rounded */
+  --slider-thumb-radius: 9999px; /* circular */
+  --slider-track-height: 8px;
+  --slider-thumb-size: 20px;
+  --slider-thumb-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --slider-thumb-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.3);
+  --slider-track-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  
+  /* Radio button variables - Modern */
+  --radio-size: 20px;
+  --radio-border-radius: 9999px; /* fully circular */
+  --radio-border-width: 2px;
+  --radio-dot-size: 10px;
+  --radio-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --radio-shadow-hover: 0 2px 6px rgba(0, 0, 0, 0.15);
+  --radio-shadow-focus: 0 0 0 3px rgba(80, 200, 120, 0.2);
+  
+  /* Checkbox variables - Modern */
+  --checkbox-size: 20px;
+  --checkbox-border-radius: 0.375rem; /* 6px - slightly rounded */
+  --checkbox-border-width: 2px;
+  --checkbox-checkmark-width: 2px;
+  --checkbox-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --checkbox-shadow-hover: 0 2px 6px rgba(0, 0, 0, 0.15);
+  --checkbox-shadow-focus: 0 0 0 3px rgba(80, 200, 120, 0.2);
+  
+  /* Input variables - Modern */
+  --input-border-radius: 0.5rem; /* 8px - smooth rounded */
+  --input-border-width: 2px;
+  --input-padding-x: 0.875rem;
+  --input-padding-y: 0.625rem;
+  --input-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  --input-shadow-focus: 0 0 0 3px rgba(80, 200, 120, 0.2);
+  --input-font-size: 0.875rem;
+  
+  /* Color picker variables - Modern */
+  --color-picker-size: 48px;
+  --color-picker-border-radius: 0.5rem; /* rounded */
+  --color-picker-border-width: 2px;
+  --color-picker-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --color-picker-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --color-picker-shadow-focus: 0 0 0 3px rgba(80, 200, 120, 0.2);
 }
 
 /* Dark theme */
@@ -90,4 +142,127 @@
 
   --font-antique: "Uncial Antiqua", sans-serif;
   --font-epic: "Michroma", sans-serif;
+  
+  --button-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --button-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  
+  /* Slider variables - Modern Dark */
+  --slider-thumb-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  --slider-thumb-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.6);
+  --slider-track-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+  
+  /* Radio button variables - Modern Dark */
+  --radio-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --radio-shadow-hover: 0 3px 8px rgba(0, 0, 0, 0.4);
+  --radio-shadow-focus: 0 0 0 3px rgba(80, 200, 120, 0.3);
+  
+  /* Checkbox variables - Modern Dark */
+  --checkbox-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --checkbox-shadow-hover: 0 3px 8px rgba(0, 0, 0, 0.4);
+  --checkbox-shadow-focus: 0 0 0 3px rgba(80, 200, 120, 0.3);
+  
+  /* Input variables - Modern Dark */
+  --input-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  --input-shadow-focus: 0 0 0 3px rgba(80, 200, 120, 0.3);
+  
+  /* Color picker variables - Modern Dark */
+  --color-picker-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  --color-picker-shadow-hover: 0 4px 10px rgba(0, 0, 0, 0.4);
+  --color-picker-shadow-focus: 0 0 0 3px rgba(80, 200, 120, 0.3);
+}
+
+/* Retro aesthetic */
+.retro {
+  --button-radius: 0.25rem; /* 4px - sharp, retro corners */
+  --button-shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.2);
+  --button-shadow-hover: 6px 6px 0 0 rgba(0, 0, 0, 0.3);
+  --button-transform-hover: translate(-2px, -2px);
+  --transition-speed: 100ms;
+  
+  --color-primary: #ff6b9d; /* hot pink */
+  --color-accent: #ffd93d; /* electric yellow */
+  --color-accent-foreground: #1a1a1a;
+  
+  --font-body: "Courier New", monospace;
+  
+  /* Slider variables - Retro */
+  --slider-track-radius: 0.125rem; /* sharp corners */
+  --slider-thumb-radius: 0.125rem; /* blocky square */
+  --slider-track-height: 12px;
+  --slider-thumb-size: 24px;
+  --slider-thumb-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.3);
+  --slider-thumb-shadow-hover: 4px 4px 0 0 rgba(0, 0, 0, 0.5);
+  --slider-track-shadow: 2px 2px 0 0 rgba(0, 0, 0, 0.2);
+  
+  /* Radio button variables - Retro */
+  --radio-size: 22px;
+  --radio-border-radius: 0.125rem; /* sharp square */
+  --radio-border-width: 3px;
+  --radio-dot-size: 12px;
+  --radio-shadow: 2px 2px 0 0 rgba(0, 0, 0, 0.3);
+  --radio-shadow-hover: 3px 3px 0 0 rgba(0, 0, 0, 0.4);
+  --radio-shadow-focus: 3px 3px 0 0 rgba(255, 107, 157, 0.5);
+  
+  /* Checkbox variables - Retro */
+  --checkbox-size: 22px;
+  --checkbox-border-radius: 0.125rem; /* sharp square */
+  --checkbox-border-width: 3px;
+  --checkbox-checkmark-width: 3px;
+  --checkbox-shadow: 2px 2px 0 0 rgba(0, 0, 0, 0.3);
+  --checkbox-shadow-hover: 3px 3px 0 0 rgba(0, 0, 0, 0.4);
+  --checkbox-shadow-focus: 3px 3px 0 0 rgba(255, 107, 157, 0.5);
+  
+  /* Input variables - Retro */
+  --input-border-radius: 0.125rem; /* sharp corners */
+  --input-border-width: 3px;
+  --input-padding-x: 0.75rem;
+  --input-padding-y: 0.5rem;
+  --input-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.2);
+  --input-shadow-focus: 4px 4px 0 0 rgba(255, 107, 157, 0.5);
+  --input-font-size: 0.875rem;
+  
+  /* Color picker variables - Retro */
+  --color-picker-size: 48px;
+  --color-picker-border-radius: 0.125rem; /* sharp square */
+  --color-picker-border-width: 3px;
+  --color-picker-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.3);
+  --color-picker-shadow-hover: 4px 4px 0 0 rgba(0, 0, 0, 0.4);
+  --color-picker-shadow-focus: 4px 4px 0 0 rgba(255, 107, 157, 0.5);
+}
+
+.dark.retro {
+  --color-background: #1a0033; /* deep purple */
+  --color-muted: #2d0052;
+  --color-border: #ff00ff; /* neon magenta */
+  
+  --color-primary: #00ffff; /* cyan */
+  --color-accent: #ff00ff; /* magenta */
+  --color-accent-foreground: #000000;
+  
+  --button-shadow: 4px 4px 0 0 #ff00ff;
+  --button-shadow-hover: 6px 6px 0 0 #00ffff;
+  
+  /* Slider variables - Retro Dark */
+  --slider-thumb-shadow: 3px 3px 0 0 #ff00ff;
+  --slider-thumb-shadow-hover: 4px 4px 0 0 #00ffff;
+  --slider-track-shadow: 2px 2px 0 0 rgba(255, 0, 255, 0.3);
+  
+  /* Radio button variables - Retro Dark */
+  --radio-shadow: 2px 2px 0 0 #ff00ff;
+  --radio-shadow-hover: 3px 3px 0 0 #00ffff;
+  --radio-shadow-focus: 3px 3px 0 0 #00ffff;
+  
+  /* Checkbox variables - Retro Dark */
+  --checkbox-shadow: 2px 2px 0 0 #ff00ff;
+  --checkbox-shadow-hover: 3px 3px 0 0 #00ffff;
+  --checkbox-shadow-focus: 3px 3px 0 0 #00ffff;
+  
+  /* Input variables - Retro Dark */
+  --input-shadow: 3px 3px 0 0 #ff00ff;
+  --input-shadow-focus: 4px 4px 0 0 #00ffff;
+  
+  /* Color picker variables - Retro Dark */
+  --color-picker-shadow: 3px 3px 0 0 #ff00ff;
+  --color-picker-shadow-hover: 4px 4px 0 0 #00ffff;
+  --color-picker-shadow-focus: 4px 4px 0 0 #00ffff;
 }
